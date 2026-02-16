@@ -1,9 +1,15 @@
 # iiZappy/website
 
-A single-page, meme-heavy, *professional-looking* parody landing page: **Joinky Sploinky Ventures™**.
+A single-page, meme-heavy, **professional-looking** Arma 3 scripting tutorial parody site.
 
+Theme:
+- It teaches SQF “with absolute confidence and zero understanding”.
+- Mascots: **Spingo** (definitely not a sponge), **Jimbo** (definitely not a boy genius), **Shronk** (definitely not an ogre).
+
+Features:
 - Smooth UI, responsive layout, accessible interactions.
-- Satire / scam-joke vibe (no real payments, no data collection).
+- Lots of easter eggs + procedural WebAudio sound effects (no external assets).
+- No tracking, no cookies, no data collection.
 
 ## Develop
 Open `index.html` directly, or serve it locally.

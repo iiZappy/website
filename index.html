@@ -4,11 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="dark light" />
-  <meta name="description" content="Joinky Sploinky Ventures™ — a suspiciously polished parody landing page. 100% satire." />
+  <meta name="description" content="Spingo's SQF Academy — Arma 3 scripting tutorial parody: 0% understanding, 200% confidence." />
 
-  <title>Joinky Sploinky Ventures™</title>
+  <title>Spingo's SQF Academy</title>
 
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='g' cx='32' cy='24' r='38'%3E%3Cstop offset='0' stop-color='%23a8ffcb'/%3E%3Cstop offset='1' stop-color='%230b1020'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Cpath d='M14 38c8 9 28 9 36 0' stroke='%23ffffff' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='24' cy='25' r='4' fill='%23ffffff'/%3E%3Ccircle cx='40' cy='25' r='4' fill='%23ffffff'/%3E%3Ctext x='32' y='56' text-anchor='middle' font-size='11' fill='%23ffffff' font-family='system-ui'%3EJSV%3C/text%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='g' cx='30' cy='20' r='42'%3E%3Cstop offset='0' stop-color='%23fff27c'/%3E%3Cstop offset='1' stop-color='%230b1020'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ccircle cx='24' cy='27' r='4' fill='%23ffffff'/%3E%3Ccircle cx='40' cy='27' r='4' fill='%23ffffff'/%3E%3Cpath d='M16 42c9 8 23 8 32 0' stroke='%23ffffff' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3Ctext x='32' y='56' text-anchor='middle' font-size='11' fill='%23ffffff' font-family='system-ui'%3ESQF%3C/text%3E%3C/svg%3E" />
 
   <link rel="preload" href="styles.css" as="style" />
   <link rel="stylesheet" href="styles.css" />
@@ -17,23 +17,28 @@
   <a class="skip" href="#main">Skip to content</a>
 
   <header class="topbar">
-    <div class="brand" aria-label="Joinky Sploinky Ventures">
-      <div class="brand__mark" aria-hidden="true">JS</div>
+    <div class="brand" aria-label="Spingo's SQF Academy">
+      <button class="brand__mark" id="brand-mark" type="button" aria-label="Brand mark (has secrets)">SA</button>
       <div class="brand__text">
-        <div class="brand__name">Joinky Sploinky Ventures™</div>
-        <div class="brand__tag">Suspiciously polished. Unreasonably memeable.</div>
+        <div class="brand__name">Spingo's SQF Academy™</div>
+        <div class="brand__tag">Arma 3 scripting tutorials by someone who absolutely should not be teaching.</div>
       </div>
     </div>
 
     <nav class="nav" aria-label="Primary">
-      <a href="#features">Features</a>
-      <a href="#proof">Proof</a>
+      <a href="#lessons">Lessons</a>
+      <a href="#playground">Playground</a>
+      <a href="#memes">Memes</a>
       <a href="#faq">FAQ</a>
+
       <button class="btn btn--ghost" id="btn-sound" type="button" aria-pressed="false" title="Toggle sound">
         Sound: Off
       </button>
-      <button class="btn btn--primary" id="btn-claim" type="button">
-        Claim Joinky
+      <button class="btn btn--ghost" id="btn-mute" type="button" aria-pressed="false" title="Mute all sound">
+        Mute: Off
+      </button>
+      <button class="btn btn--primary" id="btn-panic" type="button">
+        Panic: DESYNC
       </button>
     </nav>
   </header>
@@ -42,170 +47,208 @@
     <section class="hero">
       <div class="hero__left">
         <p class="pill" id="pill-status" role="status" aria-live="polite">
-          Verified by the International Bureau of Vibes
+          Certified by the International Bureau of “It Works On My Machine”
         </p>
 
         <h1>
-          Get rich in <span class="glow">Joinky Sploinkies</span>
-          with the confidence of a Fortune 500 scam.
+          Learn <span class="glow">SQF</span> the wrong way,
+          with confidence levels that cause server restarts.
         </h1>
 
         <p class="lede">
-          This website is a <strong>parody</strong>. It does not take payments, does not collect personal data, and does not actually mint anything.
-          It just looks ridiculously professional while saying "joinky sploinky" a lot.
+          Welcome to a comedy tutorial site: the UI is clean, the advice is suspicious.
+          Spingo, Jimbo, and Shronk will guide you through Arma 3 scripting with the energy of a YouTube comment section.
         </p>
 
         <div class="cta">
-          <button class="btn btn--primary btn--big" id="btn-spin" type="button">
-            Spin the Wheel of Totally Legit
+          <button class="btn btn--primary btn--big" id="btn-random" type="button">
+            Generate Random SQF Advice
           </button>
-          <button class="btn btn--glass btn--big" id="btn-demo" type="button">
-            Run a Live Scam Demo
+          <button class="btn btn--glass btn--big" id="btn-live" type="button">
+            Run “MP Test” (Fake)
           </button>
         </div>
 
         <div class="stats" aria-label="Fun stats">
           <div class="stat">
-            <div class="stat__k" id="stat-trust">97%</div>
-            <div class="stat__v">Trust score (self-reported)</div>
+            <div class="stat__k" id="stat-trust">100%</div>
+            <div class="stat__v">Confidence (unearned)</div>
           </div>
           <div class="stat">
-            <div class="stat__k" id="stat-uptime">24/7</div>
-            <div class="stat__v">Uptime (in our imagination)</div>
+            <div class="stat__k" id="stat-errors">0</div>
+            <div class="stat__v">Errors (ignored)</div>
           </div>
           <div class="stat">
-            <div class="stat__k" id="stat-compliance">ISO</div>
-            <div class="stat__v">Certified in “Probably”</div>
+            <div class="stat__k" id="stat-fps">∞</div>
+            <div class="stat__v">FPS (on the loading screen)</div>
           </div>
         </div>
 
         <div class="countdown" aria-label="Fake urgency countdown">
-          <div class="countdown__label">Limited-time vibe window closes in</div>
+          <div class="countdown__label">Next “hotfix” deploys in</div>
           <div class="countdown__time" id="countdown">00:09:59</div>
-          <div class="countdown__hint">(It restarts when it hits zero. Like your excuses.)</div>
+          <div class="countdown__hint">(It deploys whether you want it or not.)</div>
         </div>
 
         <div class="micro">
-          <button class="link" id="btn-terms" type="button">Read our Terms of Extremely Serious Business</button>
+          <button class="link" id="btn-terms" type="button">Read our “Best Practices”</button>
           <span class="sep" aria-hidden="true">•</span>
-          <button class="link" id="btn-copy" type="button">Copy referral code</button>
+          <button class="link" id="btn-copy" type="button">Copy “SQF certified” badge text</button>
           <span class="copy" id="copy-status" role="status" aria-live="polite"></span>
         </div>
       </div>
 
       <div class="hero__right">
-        <div class="card card--big" aria-label="Parody checkout">
+        <div class="card card--big" aria-label="Parody compiler">
           <div class="card__top">
-            <div class="badge" title="Not a real badge">SECURE™</div>
-            <div class="badge badge--warn" title="Also not a real badge">VERY LEGIT</div>
-            <div class="badge badge--mint" title="We made this up">VIBE-CHAIN</div>
+            <div class="badge" title="Not a real badge">BIS-APPROVED*</div>
+            <div class="badge badge--warn" title="*not actually">MAYBE MP-SAFE</div>
+            <div class="badge badge--mint" title="sounds technical">THREAD-READY</div>
           </div>
 
           <div class="checkout">
-            <h2>Instant Joinky Allocation</h2>
-            <p class="muted">Choose your plan. Nobody gets charged. Your dignity might.</p>
+            <h2>Instant SQF Compiler</h2>
+            <p class="muted">Paste nothing. Compile anyway. That’s the Spingo way.</p>
 
-            <div class="plans" role="radiogroup" aria-label="Plans">
+            <div class="plans" role="radiogroup" aria-label="Teaching style">
               <label class="plan">
-                <input type="radio" name="plan" value="starter" checked />
+                <input type="radio" name="plan" value="spingo" checked />
                 <span>
-                  <span class="plan__name">Starter</span>
-                  <span class="plan__desc">1 Joinky • 0 Sploinky</span>
+                  <span class="plan__name">Spingo Mode</span>
+                  <span class="plan__desc">Bubble logic • Maximum vibes</span>
                 </span>
-                <span class="plan__price">$0</span>
+                <span class="plan__price">Free</span>
               </label>
               <label class="plan">
-                <input type="radio" name="plan" value="sigma" />
+                <input type="radio" name="plan" value="jimbo" />
                 <span>
-                  <span class="plan__name">Sigma</span>
-                  <span class="plan__desc">999 Joinky • 1 Sploinky (mythic)</span>
+                  <span class="plan__name">Jimbo Mode</span>
+                  <span class="plan__desc">Zap logic • “Brain” moments</span>
                 </span>
-                <span class="plan__price">$0</span>
+                <span class="plan__price">Free</span>
               </label>
               <label class="plan">
-                <input type="radio" name="plan" value="enterprise" />
+                <input type="radio" name="plan" value="shronk" />
                 <span>
-                  <span class="plan__name">Enterprise</span>
-                  <span class="plan__desc">Custom vibes • Dedicated scam consultant</span>
+                  <span class="plan__name">Shronk Mode</span>
+                  <span class="plan__desc">Ogre logic • Loudly correct</span>
                 </span>
-                <span class="plan__price">$0</span>
+                <span class="plan__price">Free</span>
               </label>
             </div>
 
             <div class="row">
               <div class="field">
-                <label for="email">Email (optional, ignored)</label>
-                <input id="email" type="email" placeholder="you@totallylegit.biz" autocomplete="off" />
+                <label for="mission">Mission name (optional, ignored)</label>
+                <input id="mission" type="text" placeholder="MyMission.Altis" autocomplete="off" />
               </div>
               <div class="field">
-                <label for="risk">Scam Smoothness</label>
-                <input id="risk" type="range" min="0" max="100" value="42" />
-                <div class="risk" id="risk-text">42% smooth</div>
+                <label for="risk">Confidence</label>
+                <input id="risk" type="range" min="0" max="100" value="73" />
+                <div class="risk" id="risk-text">73% confident (dangerous)</div>
               </div>
             </div>
 
-            <button class="btn btn--primary btn--big btn--full" id="btn-checkout" type="button">
-              Confirm Zero-Dollar Checkout
+            <button class="btn btn--primary btn--big btn--full" id="btn-compile" type="button">
+              Compile & Publish Tutorial
             </button>
 
             <div class="fineprint">
-              By clicking, you agree to absolutely nothing legally binding.
-              You do, however, consent to being called “champ” in the modal.
+              This is a parody tutorial site. It does not run SQF, upload files, or send data anywhere.
             </div>
           </div>
         </div>
 
-        <div class="card" aria-label="Joinky generator">
+        <div class="card" aria-label="Soundboard">
           <div class="gen">
             <div class="gen__top">
-              <h3>Joinky Sploinky Generator</h3>
-              <button class="btn btn--ghost" id="btn-generate" type="button">Generate</button>
+              <h3>Meme Soundboard</h3>
+              <div class="vol">
+                <label for="vol" class="vol__label">Volume</label>
+                <input id="vol" type="range" min="0" max="100" value="70" />
+              </div>
             </div>
-            <div class="gen__out" id="gen-out" aria-live="polite">Click “Generate” to receive your vibes.</div>
+            <div class="soundboard" id="soundboard" aria-label="Soundboard buttons">
+              <button class="sb" data-sfx="bubble" type="button">Bubble pop</button>
+              <button class="sb" data-sfx="zap" type="button">Jimbo zap</button>
+              <button class="sb" data-sfx="horn" type="button">Shronk horn</button>
+              <button class="sb" data-sfx="boing" type="button">Boing</button>
+              <button class="sb" data-sfx="honk" type="button">Honk</button>
+              <button class="sb" data-sfx="beep" type="button">Arma-ish beep</button>
+            </div>
+            <div class="gen__out" id="gen-out" aria-live="polite">Press a sound. Type “spingo”, “jimbo”, or “shronk”.</div>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="features" class="grid">
-      <h2 class="section-title">Features that scream “this is fine”</h2>
+    <section id="lessons" class="grid">
+      <h2 class="section-title">Lessons (mostly wrong)</h2>
+
       <div class="tiles">
         <article class="tile">
-          <h3>Professional polish</h3>
-          <p>Glass UI, smooth motion, and just enough jargon to look expensive.</p>
+          <h3>Lesson 1: Variables</h3>
+          <p>Spingo says: just invent variables mid-fight and the engine will understand your intent.</p>
+          <div class="tile__actions">
+            <button class="btn btn--ghost" data-lesson="vars" type="button">Show Spingo advice</button>
+            <button class="btn btn--glass" data-fix="vars" type="button">Show what you should do</button>
+          </div>
+          <pre class="code" id="code-vars" aria-label="Code block"></pre>
+          <button class="btn btn--ghost copybtn" data-copy="code-vars" type="button">Copy snippet</button>
         </article>
+
         <article class="tile">
-          <h3>Interactive memes</h3>
-          <p>Buttons do things. Things do jokes. Jokes do dopamine.</p>
+          <h3>Lesson 2: MP Sync</h3>
+          <p>Jimbo says: if it desyncs, just run it again but louder. Preferably on every client.</p>
+          <div class="tile__actions">
+            <button class="btn btn--ghost" data-lesson="mp" type="button">Show Jimbo advice</button>
+            <button class="btn btn--glass" data-fix="mp" type="button">Show what you should do</button>
+          </div>
+          <pre class="code" id="code-mp" aria-label="Code block"></pre>
+          <button class="btn btn--ghost copybtn" data-copy="code-mp" type="button">Copy snippet</button>
         </article>
+
         <article class="tile">
-          <h3>Zero-data policy</h3>
-          <p>No tracking, no cookies, no forms sent anywhere. The scam is purely aesthetic.</p>
+          <h3>Lesson 3: UI Dialogs</h3>
+          <p>Shronk says: UI is easy—just spawn 12 dialogs per frame until your monitor learns.</p>
+          <div class="tile__actions">
+            <button class="btn btn--ghost" data-lesson="ui" type="button">Show Shronk advice</button>
+            <button class="btn btn--glass" data-fix="ui" type="button">Show what you should do</button>
+          </div>
+          <pre class="code" id="code-ui" aria-label="Code block"></pre>
+          <button class="btn btn--ghost copybtn" data-copy="code-ui" type="button">Copy snippet</button>
         </article>
+
         <article class="tile">
-          <h3>Accessibility</h3>
-          <p>Keyboard-friendly, readable contrast, reduced-motion support.</p>
+          <h3>Lesson 4: RemoteExec</h3>
+          <p>Spingo says: remoteExec everything to everyone. Security is a mindset.</p>
+          <div class="tile__actions">
+            <button class="btn btn--ghost" data-lesson="rex" type="button">Show Spingo advice</button>
+            <button class="btn btn--glass" data-fix="rex" type="button">Show what you should do</button>
+          </div>
+          <pre class="code" id="code-rex" aria-label="Code block"></pre>
+          <button class="btn btn--ghost copybtn" data-copy="code-rex" type="button">Copy snippet</button>
         </article>
       </div>
     </section>
 
-    <section id="proof" class="proof">
+    <section id="playground" class="proof">
       <div class="proof__left">
-        <h2>Proof we’re legit</h2>
-        <p class="muted">We have certificates. They are extremely real. Look how shiny.</p>
+        <h2>Playground</h2>
+        <p class="muted">A fake terminal that prints the kind of “tips” that cause forum threads.</p>
 
-        <div class="certs" aria-label="Certificates">
-          <button class="cert" id="cert-1" type="button">Certificate of Vibe Compliance</button>
-          <button class="cert" id="cert-2" type="button">License to Sploink</button>
-          <button class="cert" id="cert-3" type="button">Anti-Scam Scam Permit</button>
+        <div class="certs" aria-label="Playground actions">
+          <button class="cert" id="btn-spingo" type="button">Summon Spingo</button>
+          <button class="cert" id="btn-jimbo" type="button">Summon Jimbo</button>
+          <button class="cert" id="btn-shronk" type="button">Summon Shronk</button>
         </div>
 
-        <div class="checklist" aria-label="Compliance checklist">
-          <h3>Joinky Due Diligence™</h3>
-          <label><input type="checkbox" class="chk" /> I have read at least 0% of the terms.</label>
-          <label><input type="checkbox" class="chk" /> I understand the vibes are not financial advice.</label>
-          <label><input type="checkbox" class="chk" /> I accept that “sploinky” is not a currency.</label>
-          <label><input type="checkbox" class="chk" /> I will not ask support to reverse my poor decisions.</label>
+        <div class="checklist" aria-label="Chaos checklist">
+          <h3>Deployment Checklist™</h3>
+          <label><input type="checkbox" class="chk" /> I tested in editor (once).</label>
+          <label><input type="checkbox" class="chk" /> I tested in MP (no).</label>
+          <label><input type="checkbox" class="chk" /> I blamed the engine (yes).</label>
+          <label><input type="checkbox" class="chk" /> I shipped anyway (absolutely).</label>
         </div>
       </div>
 
@@ -213,16 +256,14 @@
         <div class="terminal" aria-label="Fake terminal output">
           <div class="terminal__bar">
             <span class="dot dot--r"></span><span class="dot dot--y"></span><span class="dot dot--g"></span>
-            <span class="terminal__title">joinky_sploinky.sh</span>
+            <span class="terminal__title">spingo_tutorial.sqf</span>
           </div>
           <pre class="terminal__body" id="terminal">
-$ ./joinky_sploinky.sh --mint --confidence=unreasonable
-[ok] checking vibes...
-[ok] verifying trust badges...
-[warn] badge "VERY LEGIT" is 100% vibes
-[ok] generating joinkies...
-[ok] sploinky status: mythic
-[done] congratulations champ, you are now emotionally richer
+$ execVM "spingo_tutorial.sqf";
+[ok] booting tutorial engine...
+[warn] detected competence: disabling
+[ok] enabling vibes
+[done] welcome, future RPT enjoyer
           </pre>
           <div class="terminal__actions">
             <button class="btn btn--glass" id="btn-glitch" type="button">Glitch mode</button>
@@ -232,33 +273,33 @@ $ ./joinky_sploinky.sh --mint --confidence=unreasonable
       </div>
     </section>
 
-    <section id="faq" class="faq">
-      <h2 class="section-title">FAQ</h2>
+    <section id="memes" class="faq">
+      <h2 class="section-title">Meme vault</h2>
       <details>
-        <summary>Is this a scam?</summary>
-        <p>It is a <strong>scam joke</strong>. Satire. A parody of scammy landing pages. No payments, no data, no tracking.</p>
+        <summary>How do I unlock the secret modes?</summary>
+        <p>Type <strong>spingo</strong>, <strong>jimbo</strong>, or <strong>shronk</strong>. Or do the Konami code for maximum shame.</p>
       </details>
       <details>
-        <summary>Can I really buy Joinky Sploinkies?</summary>
-        <p>No. But you can click buttons and feel something.</p>
+        <summary>Does this site actually teach SQF?</summary>
+        <p>It teaches you what not to do, then shows a sane alternative. The joke is the confidence.</p>
       </details>
       <details>
-        <summary>Why does it look so professional?</summary>
-        <p>Because that’s the joke. The polish is real; the offer is not.</p>
+        <summary>Are there copyrighted images or audio clips?</summary>
+        <p>No. All “character energy” is parody text + original visuals + procedural sounds.</p>
       </details>
       <details>
-        <summary>Can you add more memes?</summary>
+        <summary>Can you add more easter eggs?</summary>
         <p>Yes. Always yes.</p>
       </details>
     </section>
 
     <footer class="footer">
       <div>
-        <div class="footer__title">Joinky Sploinky Ventures™</div>
-        <div class="footer__small">Satire landing page. No transactions. No data collection.</div>
+        <div class="footer__title">Spingo's SQF Academy™</div>
+        <div class="footer__small">Parody tutorial site. No tracking. No uploads. Just vibes and bad advice.</div>
       </div>
       <div class="footer__right">
-        <button class="btn btn--ghost" id="btn-easter" type="button">Summon Joinky</button>
+        <button class="btn btn--ghost" id="btn-easter" type="button">Deploy hotfix</button>
       </div>
     </footer>
   </main>
@@ -266,13 +307,13 @@ $ ./joinky_sploinky.sh --mint --confidence=unreasonable
   <dialog class="modal" id="modal">
     <form method="dialog" class="modal__inner">
       <div class="modal__top">
-        <div class="modal__title" id="modal-title">Totally Legit™</div>
+        <div class="modal__title" id="modal-title">Spingo Says</div>
         <button class="btn btn--ghost" value="close" aria-label="Close">Close</button>
       </div>
       <div class="modal__body" id="modal-body"></div>
       <div class="modal__actions">
         <button class="btn btn--glass" id="btn-confetti" type="button">Confetti</button>
-        <button class="btn btn--primary" value="close">Understood, champ</button>
+        <button class="btn btn--primary" value="close">Understood (probably)</button>
       </div>
     </form>
   </dialog>
