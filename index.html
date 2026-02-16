@@ -4,11 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="dark light" />
-  <meta name="description" content="Spingo's SQF Academy — Arma 3 scripting tutorial parody: 0% understanding, 200% confidence." />
+  <meta name="description" content="Spingo / Jimbo / Shronk — Arma 3 SQF tutorial parody with meme windows, easter eggs, and procedural sounds." />
 
-  <title>Spingo's SQF Academy</title>
+  <title>Spingo's SQF Meme Academy</title>
 
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='g' cx='30' cy='20' r='42'%3E%3Cstop offset='0' stop-color='%23fff27c'/%3E%3Cstop offset='1' stop-color='%230b1020'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ccircle cx='24' cy='27' r='4' fill='%23ffffff'/%3E%3Ccircle cx='40' cy='27' r='4' fill='%23ffffff'/%3E%3Cpath d='M16 42c9 8 23 8 32 0' stroke='%23ffffff' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3Ctext x='32' y='56' text-anchor='middle' font-size='11' fill='%23ffffff' font-family='system-ui'%3ESQF%3C/text%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='g' cx='32' cy='22' r='44'%3E%3Cstop offset='0' stop-color='%23fff27c'/%3E%3Cstop offset='1' stop-color='%23111522'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Cpath d='M14 41c9 8 27 8 36 0' stroke='%23ffffff' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='24' cy='27' r='4' fill='%23ffffff'/%3E%3Ccircle cx='40' cy='27' r='4' fill='%23ffffff'/%3E%3Ctext x='32' y='56' text-anchor='middle' font-size='11' fill='%23ffffff' font-family='system-ui'%3EMEME%3C/text%3E%3C/svg%3E" />
 
   <link rel="preload" href="styles.css" as="style" />
   <link rel="stylesheet" href="styles.css" />
@@ -16,290 +16,238 @@
 <body>
   <a class="skip" href="#main">Skip to content</a>
 
-  <header class="topbar">
-    <div class="brand" aria-label="Spingo's SQF Academy">
-      <button class="brand__mark" id="brand-mark" type="button" aria-label="Brand mark (has secrets)">SA</button>
+  <header class="topbar" aria-label="Top bar">
+    <div class="brand" aria-label="Brand">
+      <button class="brand__mark" id="brand-mark" type="button" aria-label="Spingo badge (has secrets)">
+        <span aria-hidden="true">SQF</span>
+      </button>
       <div class="brand__text">
-        <div class="brand__name">Spingo's SQF Academy™</div>
-        <div class="brand__tag">Arma 3 scripting tutorials by someone who absolutely should not be teaching.</div>
+        <div class="brand__name">Spingo's SQF Meme Academy™</div>
+        <div class="brand__tag">Arma 3 scripting tutorials by someone with unstoppable confidence and 0 clue.</div>
       </div>
     </div>
 
-    <nav class="nav" aria-label="Primary">
-      <a href="#lessons">Lessons</a>
-      <a href="#playground">Playground</a>
-      <a href="#memes">Memes</a>
-      <a href="#faq">FAQ</a>
+    <div class="controls" aria-label="Controls">
+      <button class="chip" id="btn-mode-spingo" type="button" title="Spingo">
+        Spingo
+      </button>
+      <button class="chip" id="btn-mode-jimbo" type="button" title="Jimbo">
+        Jimbo
+      </button>
+      <button class="chip" id="btn-mode-shronk" type="button" title="Shronk">
+        Shronk
+      </button>
 
-      <button class="btn btn--ghost" id="btn-sound" type="button" aria-pressed="false" title="Toggle sound">
+      <span class="sep" aria-hidden="true">|</span>
+
+      <button class="chip" id="btn-sound" type="button" aria-pressed="false" title="Enable sound">
         Sound: Off
       </button>
-      <button class="btn btn--ghost" id="btn-mute" type="button" aria-pressed="false" title="Mute all sound">
+      <button class="chip" id="btn-mute" type="button" aria-pressed="false" title="Mute all sound">
         Mute: Off
       </button>
-      <button class="btn btn--primary" id="btn-panic" type="button">
-        Panic: DESYNC
+      <label class="vol" for="vol">
+        <span class="vol__label">Vol</span>
+        <input id="vol" type="range" min="0" max="100" value="70" />
+      </label>
+
+      <button class="btn" id="btn-panic" type="button" title="Press only if you like desync">
+        PANIC: DESYNC
       </button>
-    </nav>
+    </div>
   </header>
 
   <main id="main" class="wrap">
-    <section class="hero">
+    <div class="toast" id="pill-status" role="status" aria-live="polite">
+      Boot complete. Competence detected: disabling.
+    </div>
+
+    <section class="hero" aria-label="Hero">
       <div class="hero__left">
-        <p class="pill" id="pill-status" role="status" aria-live="polite">
-          Certified by the International Bureau of “It Works On My Machine”
-        </p>
-
         <h1>
-          Learn <span class="glow">SQF</span> the wrong way,
-          with confidence levels that cause server restarts.
+          SQF tutorial site,
+          but written like a meme.
         </h1>
-
         <p class="lede">
-          Welcome to a comedy tutorial site: the UI is clean, the advice is suspicious.
-          Spingo, Jimbo, and Shronk will guide you through Arma 3 scripting with the energy of a YouTube comment section.
+          Spingo teaches the wrong thing with maximum enthusiasm.
+          Jimbo turns desync into “science”. Shronk solves bugs by yelling at them.
         </p>
 
-        <div class="cta">
-          <button class="btn btn--primary btn--big" id="btn-random" type="button">
-            Generate Random SQF Advice
-          </button>
-          <button class="btn btn--glass btn--big" id="btn-live" type="button">
-            Run “MP Test” (Fake)
-          </button>
+        <div class="hero__cta">
+          <button class="btn btn--primary" id="btn-shuffle" type="button">Shuffle windows</button>
+          <button class="btn btn--ghost" id="btn-hotfix" type="button">Deploy hotfix</button>
+          <button class="btn btn--glass" id="btn-help" type="button">How to unlock secrets</button>
         </div>
 
-        <div class="stats" aria-label="Fun stats">
-          <div class="stat">
-            <div class="stat__k" id="stat-trust">100%</div>
-            <div class="stat__v">Confidence (unearned)</div>
+        <div class="mini">
+          <div class="mini__card">
+            <div class="mini__k">Confidence</div>
+            <div class="mini__v" id="stat-confidence">200%</div>
           </div>
-          <div class="stat">
-            <div class="stat__k" id="stat-errors">0</div>
-            <div class="stat__v">Errors (ignored)</div>
+          <div class="mini__card">
+            <div class="mini__k">MP Safety</div>
+            <div class="mini__v" id="stat-mpsafe">“Probably”</div>
           </div>
-          <div class="stat">
-            <div class="stat__k" id="stat-fps">∞</div>
-            <div class="stat__v">FPS (on the loading screen)</div>
+          <div class="mini__card">
+            <div class="mini__k">RPT</div>
+            <div class="mini__v" id="stat-rpt">Quiet (for now)</div>
           </div>
         </div>
 
-        <div class="countdown" aria-label="Fake urgency countdown">
-          <div class="countdown__label">Next “hotfix” deploys in</div>
-          <div class="countdown__time" id="countdown">00:09:59</div>
-          <div class="countdown__hint">(It deploys whether you want it or not.)</div>
-        </div>
-
-        <div class="micro">
-          <button class="link" id="btn-terms" type="button">Read our “Best Practices”</button>
-          <span class="sep" aria-hidden="true">•</span>
-          <button class="link" id="btn-copy" type="button">Copy “SQF certified” badge text</button>
-          <span class="copy" id="copy-status" role="status" aria-live="polite"></span>
-        </div>
+        <p class="fine">
+          No copyrighted images or audio are shipped here—only original SVG vibes and procedural sounds.
+        </p>
       </div>
 
-      <div class="hero__right">
-        <div class="card card--big" aria-label="Parody compiler">
-          <div class="card__top">
-            <div class="badge" title="Not a real badge">BIS-APPROVED*</div>
-            <div class="badge badge--warn" title="*not actually">MAYBE MP-SAFE</div>
-            <div class="badge badge--mint" title="sounds technical">THREAD-READY</div>
-          </div>
-
-          <div class="checkout">
-            <h2>Instant SQF Compiler</h2>
-            <p class="muted">Paste nothing. Compile anyway. That’s the Spingo way.</p>
-
-            <div class="plans" role="radiogroup" aria-label="Teaching style">
-              <label class="plan">
-                <input type="radio" name="plan" value="spingo" checked />
-                <span>
-                  <span class="plan__name">Spingo Mode</span>
-                  <span class="plan__desc">Bubble logic • Maximum vibes</span>
-                </span>
-                <span class="plan__price">Free</span>
-              </label>
-              <label class="plan">
-                <input type="radio" name="plan" value="jimbo" />
-                <span>
-                  <span class="plan__name">Jimbo Mode</span>
-                  <span class="plan__desc">Zap logic • “Brain” moments</span>
-                </span>
-                <span class="plan__price">Free</span>
-              </label>
-              <label class="plan">
-                <input type="radio" name="plan" value="shronk" />
-                <span>
-                  <span class="plan__name">Shronk Mode</span>
-                  <span class="plan__desc">Ogre logic • Loudly correct</span>
-                </span>
-                <span class="plan__price">Free</span>
-              </label>
-            </div>
-
-            <div class="row">
-              <div class="field">
-                <label for="mission">Mission name (optional, ignored)</label>
-                <input id="mission" type="text" placeholder="MyMission.Altis" autocomplete="off" />
-              </div>
-              <div class="field">
-                <label for="risk">Confidence</label>
-                <input id="risk" type="range" min="0" max="100" value="73" />
-                <div class="risk" id="risk-text">73% confident (dangerous)</div>
-              </div>
-            </div>
-
-            <button class="btn btn--primary btn--big btn--full" id="btn-compile" type="button">
-              Compile & Publish Tutorial
-            </button>
-
-            <div class="fineprint">
-              This is a parody tutorial site. It does not run SQF, upload files, or send data anywhere.
-            </div>
-          </div>
-        </div>
-
-        <div class="card" aria-label="Soundboard">
-          <div class="gen">
-            <div class="gen__top">
-              <h3>Meme Soundboard</h3>
-              <div class="vol">
-                <label for="vol" class="vol__label">Volume</label>
-                <input id="vol" type="range" min="0" max="100" value="70" />
-              </div>
-            </div>
-            <div class="soundboard" id="soundboard" aria-label="Soundboard buttons">
-              <button class="sb" data-sfx="bubble" type="button">Bubble pop</button>
-              <button class="sb" data-sfx="zap" type="button">Jimbo zap</button>
-              <button class="sb" data-sfx="horn" type="button">Shronk horn</button>
-              <button class="sb" data-sfx="boing" type="button">Boing</button>
-              <button class="sb" data-sfx="honk" type="button">Honk</button>
-              <button class="sb" data-sfx="beep" type="button">Arma-ish beep</button>
-            </div>
-            <div class="gen__out" id="gen-out" aria-live="polite">Press a sound. Type “spingo”, “jimbo”, or “shronk”.</div>
-          </div>
-        </div>
+      <div class="hero__right" aria-label="Sticker wall">
+        <div class="sticker sticker--1" aria-hidden="true">REMOTEEXEC EVERYTHING</div>
+        <div class="sticker sticker--2" aria-hidden="true">IT WORKS IN EDITOR</div>
+        <div class="sticker sticker--3" aria-hidden="true">DEDICATED SERVER? NEVER HEARD OF HER</div>
+        <div class="sticker sticker--4" aria-hidden="true">SPINGO CERTIFIED</div>
       </div>
     </section>
 
-    <section id="lessons" class="grid">
-      <h2 class="section-title">Lessons (mostly wrong)</h2>
+    <section class="desktop" id="desktop" aria-label="Meme desktop">
+      <article class="win" id="win-advice" data-win>
+        <header class="win__bar" data-drag>
+          <span class="win__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="win__title">AdviceGenerator.exe</span>
+          <span class="win__hint">(dangerous)</span>
+        </header>
+        <div class="win__body">
+          <p class="muted">Click generate to receive a confidence-based tutorial. Then click “Sane fix” to undo the damage.</p>
 
-      <div class="tiles">
-        <article class="tile">
-          <h3>Lesson 1: Variables</h3>
-          <p>Spingo says: just invent variables mid-fight and the engine will understand your intent.</p>
-          <div class="tile__actions">
-            <button class="btn btn--ghost" data-lesson="vars" type="button">Show Spingo advice</button>
-            <button class="btn btn--glass" data-fix="vars" type="button">Show what you should do</button>
+          <div class="row">
+            <button class="btn btn--primary" id="btn-generate" type="button">Generate bad advice</button>
+            <button class="btn btn--glass" id="btn-sane" type="button">Generate sane fix</button>
           </div>
-          <pre class="code" id="code-vars" aria-label="Code block"></pre>
-          <button class="btn btn--ghost copybtn" data-copy="code-vars" type="button">Copy snippet</button>
-        </article>
 
-        <article class="tile">
-          <h3>Lesson 2: MP Sync</h3>
-          <p>Jimbo says: if it desyncs, just run it again but louder. Preferably on every client.</p>
-          <div class="tile__actions">
-            <button class="btn btn--ghost" data-lesson="mp" type="button">Show Jimbo advice</button>
-            <button class="btn btn--glass" data-fix="mp" type="button">Show what you should do</button>
+          <pre class="code" id="advice-out" aria-label="Generated advice"></pre>
+
+          <div class="row">
+            <button class="btn btn--ghost" id="btn-copy-advice" type="button">Copy</button>
+            <button class="btn btn--ghost" id="btn-speak" type="button" aria-pressed="false">Voice: Off</button>
+            <button class="btn btn--ghost" id="btn-laugh" type="button">Laugh track</button>
           </div>
-          <pre class="code" id="code-mp" aria-label="Code block"></pre>
-          <button class="btn btn--ghost copybtn" data-copy="code-mp" type="button">Copy snippet</button>
-        </article>
-
-        <article class="tile">
-          <h3>Lesson 3: UI Dialogs</h3>
-          <p>Shronk says: UI is easy—just spawn 12 dialogs per frame until your monitor learns.</p>
-          <div class="tile__actions">
-            <button class="btn btn--ghost" data-lesson="ui" type="button">Show Shronk advice</button>
-            <button class="btn btn--glass" data-fix="ui" type="button">Show what you should do</button>
-          </div>
-          <pre class="code" id="code-ui" aria-label="Code block"></pre>
-          <button class="btn btn--ghost copybtn" data-copy="code-ui" type="button">Copy snippet</button>
-        </article>
-
-        <article class="tile">
-          <h3>Lesson 4: RemoteExec</h3>
-          <p>Spingo says: remoteExec everything to everyone. Security is a mindset.</p>
-          <div class="tile__actions">
-            <button class="btn btn--ghost" data-lesson="rex" type="button">Show Spingo advice</button>
-            <button class="btn btn--glass" data-fix="rex" type="button">Show what you should do</button>
-          </div>
-          <pre class="code" id="code-rex" aria-label="Code block"></pre>
-          <button class="btn btn--ghost copybtn" data-copy="code-rex" type="button">Copy snippet</button>
-        </article>
-      </div>
-    </section>
-
-    <section id="playground" class="proof">
-      <div class="proof__left">
-        <h2>Playground</h2>
-        <p class="muted">A fake terminal that prints the kind of “tips” that cause forum threads.</p>
-
-        <div class="certs" aria-label="Playground actions">
-          <button class="cert" id="btn-spingo" type="button">Summon Spingo</button>
-          <button class="cert" id="btn-jimbo" type="button">Summon Jimbo</button>
-          <button class="cert" id="btn-shronk" type="button">Summon Shronk</button>
         </div>
+      </article>
 
-        <div class="checklist" aria-label="Chaos checklist">
-          <h3>Deployment Checklist™</h3>
-          <label><input type="checkbox" class="chk" /> I tested in editor (once).</label>
-          <label><input type="checkbox" class="chk" /> I tested in MP (no).</label>
-          <label><input type="checkbox" class="chk" /> I blamed the engine (yes).</label>
-          <label><input type="checkbox" class="chk" /> I shipped anyway (absolutely).</label>
+      <article class="win" id="win-lessons" data-win>
+        <header class="win__bar" data-drag>
+          <span class="win__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="win__title">Lessons.sqf (mostly wrong)</span>
+        </header>
+        <div class="win__body">
+          <details open>
+            <summary>1) Variables (Spingo edition)</summary>
+            <div class="lesson">
+              <div class="row">
+                <button class="btn btn--ghost" data-lesson="vars" type="button">Bad advice</button>
+                <button class="btn btn--glass" data-fix="vars" type="button">Sane fix</button>
+                <button class="btn btn--ghost copybtn" data-copy="code-vars" type="button">Copy</button>
+              </div>
+              <pre class="code" id="code-vars"></pre>
+            </div>
+          </details>
+
+          <details>
+            <summary>2) MP Sync (Jimbo science)</summary>
+            <div class="lesson">
+              <div class="row">
+                <button class="btn btn--ghost" data-lesson="mp" type="button">Bad advice</button>
+                <button class="btn btn--glass" data-fix="mp" type="button">Sane fix</button>
+                <button class="btn btn--ghost copybtn" data-copy="code-mp" type="button">Copy</button>
+              </div>
+              <pre class="code" id="code-mp"></pre>
+            </div>
+          </details>
+
+          <details>
+            <summary>3) UI Dialogs (Shronk style)</summary>
+            <div class="lesson">
+              <div class="row">
+                <button class="btn btn--ghost" data-lesson="ui" type="button">Bad advice</button>
+                <button class="btn btn--glass" data-fix="ui" type="button">Sane fix</button>
+                <button class="btn btn--ghost copybtn" data-copy="code-ui" type="button">Copy</button>
+              </div>
+              <pre class="code" id="code-ui"></pre>
+            </div>
+          </details>
+
+          <details>
+            <summary>4) RemoteExec (do not do this)</summary>
+            <div class="lesson">
+              <div class="row">
+                <button class="btn btn--ghost" data-lesson="rex" type="button">Bad advice</button>
+                <button class="btn btn--glass" data-fix="rex" type="button">Sane fix</button>
+                <button class="btn btn--ghost copybtn" data-copy="code-rex" type="button">Copy</button>
+              </div>
+              <pre class="code" id="code-rex"></pre>
+            </div>
+          </details>
         </div>
-      </div>
+      </article>
 
-      <div class="proof__right">
-        <div class="terminal" aria-label="Fake terminal output">
-          <div class="terminal__bar">
-            <span class="dot dot--r"></span><span class="dot dot--y"></span><span class="dot dot--g"></span>
-            <span class="terminal__title">spingo_tutorial.sqf</span>
+      <article class="win" id="win-sounds" data-win>
+        <header class="win__bar" data-drag>
+          <span class="win__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="win__title">SoundLab.wav</span>
+          <span class="win__hint">(procedural)</span>
+        </header>
+        <div class="win__body">
+          <p class="muted">These are synthetic sounds generated in your browser (no external files). Turn Sound on first.</p>
+          <div class="soundgrid" id="soundgrid">
+            <button class="sb" data-sfx="bubble" type="button">Spingo bubble</button>
+            <button class="sb" data-sfx="zap" type="button">Jimbo zap</button>
+            <button class="sb" data-sfx="horn" type="button">Shronk horn</button>
+            <button class="sb" data-sfx="slap" type="button">Slap</button>
+            <button class="sb" data-sfx="splat" type="button">Splat</button>
+            <button class="sb" data-sfx="whoosh" type="button">Whoosh</button>
+            <button class="sb" data-sfx="error" type="button">RPT error</button>
+            <button class="sb" data-sfx="success" type="button">Success (fake)</button>
+            <button class="sb" data-sfx="laugh" type="button">Laugh track</button>
           </div>
-          <pre class="terminal__body" id="terminal">
-$ execVM "spingo_tutorial.sqf";
-[ok] booting tutorial engine...
-[warn] detected competence: disabling
-[ok] enabling vibes
-[done] welcome, future RPT enjoyer
-          </pre>
-          <div class="terminal__actions">
-            <button class="btn btn--glass" id="btn-glitch" type="button">Glitch mode</button>
+        </div>
+      </article>
+
+      <article class="win" id="win-terminal" data-win>
+        <header class="win__bar" data-drag>
+          <span class="win__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="win__title">RPT_Terminal.log</span>
+        </header>
+        <div class="win__body">
+          <pre class="terminal" id="terminal" aria-label="Fake terminal"></pre>
+          <div class="row">
+            <button class="btn btn--glass" id="btn-run" type="button">Run MP test</button>
             <button class="btn btn--ghost" id="btn-clear" type="button">Clear</button>
+            <button class="btn btn--ghost" id="btn-glitch" type="button">Glitch</button>
           </div>
         </div>
-      </div>
-    </section>
+      </article>
 
-    <section id="memes" class="faq">
-      <h2 class="section-title">Meme vault</h2>
-      <details>
-        <summary>How do I unlock the secret modes?</summary>
-        <p>Type <strong>spingo</strong>, <strong>jimbo</strong>, or <strong>shronk</strong>. Or do the Konami code for maximum shame.</p>
-      </details>
-      <details>
-        <summary>Does this site actually teach SQF?</summary>
-        <p>It teaches you what not to do, then shows a sane alternative. The joke is the confidence.</p>
-      </details>
-      <details>
-        <summary>Are there copyrighted images or audio clips?</summary>
-        <p>No. All “character energy” is parody text + original visuals + procedural sounds.</p>
-      </details>
-      <details>
-        <summary>Can you add more easter eggs?</summary>
-        <p>Yes. Always yes.</p>
-      </details>
+      <article class="win" id="win-eggs" data-win>
+        <header class="win__bar" data-drag>
+          <span class="win__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="win__title">EasterEggs.txt</span>
+        </header>
+        <div class="win__body">
+          <ul class="eggs">
+            <li>Type: spingo / jimbo / shronk</li>
+            <li>Konami code: up up down down left right left right b a</li>
+            <li>Click the SQF badge 7 times</li>
+            <li>Double click a window title bar</li>
+          </ul>
+          <button class="btn btn--ghost" id="btn-confetti" type="button">Sticker cannon</button>
+        </div>
+      </article>
     </section>
 
     <footer class="footer">
-      <div>
-        <div class="footer__title">Spingo's SQF Academy™</div>
-        <div class="footer__small">Parody tutorial site. No tracking. No uploads. Just vibes and bad advice.</div>
+      <div class="footer__small">
+        Parody tutorial UI. No tracking. No uploads. No external assets.
       </div>
-      <div class="footer__right">
-        <button class="btn btn--ghost" id="btn-easter" type="button">Deploy hotfix</button>
+      <div class="footer__small">
+        Tip: enable GitHub Pages and enjoy the chaos.
       </div>
     </footer>
   </main>
@@ -307,13 +255,12 @@ $ execVM "spingo_tutorial.sqf";
   <dialog class="modal" id="modal">
     <form method="dialog" class="modal__inner">
       <div class="modal__top">
-        <div class="modal__title" id="modal-title">Spingo Says</div>
+        <div class="modal__title" id="modal-title">Spingo Help</div>
         <button class="btn btn--ghost" value="close" aria-label="Close">Close</button>
       </div>
       <div class="modal__body" id="modal-body"></div>
       <div class="modal__actions">
-        <button class="btn btn--glass" id="btn-confetti" type="button">Confetti</button>
-        <button class="btn btn--primary" value="close">Understood (probably)</button>
+        <button class="btn btn--glass" value="close">Ok (I guess)</button>
       </div>
     </form>
   </dialog>

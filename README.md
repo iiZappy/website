@@ -3,11 +3,11 @@
 A single-page, meme-heavy, **professional-looking** Arma 3 scripting tutorial parody site.
 
 Theme:
-- It teaches SQF “with absolute confidence and zero understanding”.
-- Mascots: **Spingo** (definitely not a sponge), **Jimbo** (definitely not a boy genius), **Shronk** (definitely not an ogre).
+- It teaches SQF with 0% understanding and 200% confidence.
+- Mascots: **Spingo**, **Jimbo**, **Shronk** (original, legally-distinct goofballs).
 
 Features:
-- Smooth UI, responsive layout, accessible interactions.
+- Full "meme desktop" UI rework: draggable windows, sticker collage aesthetics.
 - Lots of easter eggs + procedural WebAudio sound effects (no external assets).
 - No tracking, no cookies, no data collection.
 
