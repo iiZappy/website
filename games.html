@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <meta name="description" content="Meme games for Spingo / Jimbo / Shronk — procedural sound, zero external assets." />
+  <title>Meme Games — Spingo</title>
+
+  <link rel="preload" href="styles.css" as="style" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar" aria-label="Games top bar">
+    <div class="brand">
+      <a class="brand__back" href="index.html" aria-label="Back to editor">←</a>
+      <div class="brand__text">
+        <div class="brand__name">Meme Games</div>
+        <div class="brand__tag">Click things. Hear noises. Gain confidence irresponsibly.</div>
+      </div>
+    </div>
+
+    <div class="toolbar" aria-label="Toolbar">
+      <button class="tool" id="btn-mode-spingo" type="button">Spingo</button>
+      <button class="tool" id="btn-mode-jimbo" type="button">Jimbo</button>
+      <button class="tool" id="btn-mode-shronk" type="button">Shronk</button>
+      <span class="pipe" aria-hidden="true">|</span>
+      <button class="tool" id="btn-sound" type="button" aria-pressed="false">Sound: Off</button>
+      <button class="tool" id="btn-mute" type="button" aria-pressed="false">Mute: Off</button>
+      <label class="vol" for="vol">
+        <span class="vol__label">Vol</span>
+        <input id="vol" type="range" min="0" max="100" value="70" />
+      </label>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="toast" id="toast" role="status" aria-live="polite">Pick a game. Turn sound on.</div>
+
+    <section class="games" aria-label="Games">
+      <article class="card">
+        <div class="card__title">1) Desync Popper</div>
+        <p class="muted">Pop the bubbles before they become forum posts. Misses add RPT errors.</p>
+        <div class="gamebar">
+          <button class="btn btn--primary" id="pop-start" type="button">Start</button>
+          <button class="btn btn--ghost" id="pop-stop" type="button">Stop</button>
+          <span class="score">Score: <strong id="pop-score">0</strong></span>
+          <span class="score">Errors: <strong id="pop-errors">0</strong></span>
+        </div>
+        <canvas class="gamecanvas" id="pop-canvas" aria-label="Desync Popper canvas"></canvas>
+      </article>
+
+      <article class="card">
+        <div class="card__title">2) RemoteExec Firewall</div>
+        <p class="muted">Decide if a request is SUS or SAFE. Wrong decisions increase “vibes” (bad).</p>
+        <div class="gamebar">
+          <button class="btn btn--primary" id="fw-start" type="button">Start</button>
+          <button class="btn btn--ghost" id="fw-stop" type="button">Stop</button>
+          <span class="score">Score: <strong id="fw-score">0</strong></span>
+          <span class="score">Streak: <strong id="fw-streak">0</strong></span>
+        </div>
+        <div class="firewall">
+          <div class="req" id="fw-req" aria-label="Request card">Press Start.</div>
+          <div class="row">
+            <button class="btn btn--glass" id="fw-allow" type="button">ALLOW</button>
+            <button class="btn btn--ghost" id="fw-deny" type="button">DENY</button>
+          </div>
+          <div class="hint" id="fw-hint">Hint: broadcast to everyone is usually cursed.</div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__title">3) Eden Placement Panic</div>
+        <p class="muted">Click fast to place entities. The grid lies. Snap is a suggestion.</p>
+        <div class="gamebar">
+          <button class="btn btn--primary" id="pp-start" type="button">Start 20s</button>
+          <button class="btn btn--ghost" id="pp-reset" type="button">Reset</button>
+          <span class="score">Placed: <strong id="pp-score">0</strong></span>
+          <span class="score">Time: <strong id="pp-time">20</strong>s</span>
+        </div>
+        <canvas class="gamecanvas" id="pp-canvas" aria-label="Placement Panic canvas"></canvas>
+      </article>
+    </section>
+
+    <footer class="footer">
+      <div class="footer__small">No external assets. Procedural audio only.</div>
+      <div class="footer__small">Type: spingo/jimbo/shronk. Konami does something dumb.</div>
+    </footer>
+  </main>
+
+  <canvas id="fx" class="fx" aria-hidden="true"></canvas>
+
+  <script src="core.js" defer></script>
+  <script src="games.js" defer></script>
+</body>
+</html>
