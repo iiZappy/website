@@ -111,6 +111,8 @@ code{ background: color-mix(in srgb, var(--text) 10%, transparent); padding: 0 6
   background: color-mix(in srgb, var(--panel) 85%, var(--accent) 15%);
 }
 
+.nav__link.is-on{ background: color-mix(in srgb, var(--panel) 75%, var(--accent) 25%); border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); }
+
 .nav__btn{ cursor:pointer; font-weight: 900; }
 
 .nav__select{ display:flex; gap: 8px; align-items:center; color: var(--muted); font-weight: 850; }
@@ -129,6 +131,15 @@ code{ background: color-mix(in srgb, var(--text) 10%, transparent); padding: 0 6
 
 .side{ min-width:0; }
 .center{ min-width:0; }
+
+.view[hidden]{ display:none; }
+
+@media (prefers-reduced-motion: no-preference){
+  .view.is-enter{ animation: viewIn 220ms ease-out; }
+  @keyframes viewIn{ from{ opacity:0; transform: translateY(6px);} to{ opacity:1; transform:none;} }
+}
+
+.embed{ width: 100%; height: 980px; border: 0; border-radius: var(--r); background: transparent; }
 
 .card{
   border: 1px solid var(--line);
@@ -261,4 +272,5 @@ code{ background: color-mix(in srgb, var(--text) 10%, transparent); padding: 0 6
   .side--right{ order: 3; }
   .search{ display:none; }
   .nav__select span{ display:none; }
+  .embed{ height: 860px; }
 }

@@ -329,6 +329,65 @@
     }
   }
 
+  function spawnStars(count = 60){
+    if (!fx) return;
+    const w = fx.width;
+    const h = fx.height;
+    const c = prefersReduced ? Math.floor(count * 0.35) : count;
+    for (let i=0;i<c;i++){
+      parts.push({
+        kind: 'star',
+        x: w * (0.15 + Math.random() * 0.7),
+        y: h * (0.10 + Math.random() * 0.22),
+        vx: (Math.random()-0.5) * 8,
+        vy: Math.random() * -8 - 2,
+        g: 0.18 + Math.random() * 0.18,
+        r: 3 + Math.random() * 6,
+        a: 1,
+        rot: Math.random() * Math.PI,
+        vr: (Math.random()-0.5) * 0.35,
+      });
+    }
+  }
+
+  function spawnBubbles(count = 18){
+    if (!fx) return;
+    const w = fx.width;
+    const h = fx.height;
+    const c = prefersReduced ? Math.floor(count * 0.4) : count;
+    for (let i=0;i<c;i++){
+      parts.push({
+        kind: 'bubble',
+        x: w * (0.2 + Math.random() * 0.6),
+        y: h * (0.75 + Math.random() * 0.18),
+        vx: (Math.random()-0.5) * 1.6,
+        vy: - (1.2 + Math.random() * 2.6),
+        g: -0.005,
+        r: 5 + Math.random() * 10,
+        a: 0.85,
+      });
+    }
+  }
+
+  function spawnSlime(count = 14){
+    if (!fx) return;
+    const w = fx.width;
+    const h = fx.height;
+    const c = prefersReduced ? Math.floor(count * 0.45) : count;
+    for (let i=0;i<c;i++){
+      parts.push({
+        kind: 'slime',
+        x: w * (0.25 + Math.random() * 0.5),
+        y: h * (0.12 + Math.random() * 0.10),
+        vx: (Math.random()-0.5) * 4,
+        vy: Math.random() * -3 - 1,
+        g: 0.20 + Math.random() * 0.15,
+        r: 4 + Math.random() * 10,
+        a: 0.95,
+      });
+    }
+  }
+
   function tickFx(){
     if (!fxc || !fx) {
       requestAnimationFrame(tickFx);
@@ -339,21 +398,65 @@
     parts = parts.filter(p => p.a > 0.02);
 
     for (const p of parts){
-      if (p.kind !== 'confetti') continue;
-
-      p.vy += p.g;
-      p.x += p.vx;
-      p.y += p.vy;
-      p.rot += p.vr;
+      p.vy += (p.g || 0);
+      p.x += (p.vx || 0);
+      p.y += (p.vy || 0);
+      if (p.rot != null) p.rot += (p.vr || 0);
       p.a *= 0.985;
 
-      fxc.save();
-      fxc.globalAlpha = p.a;
-      fxc.translate(p.x, p.y);
-      fxc.rotate(p.rot);
-      fxc.fillStyle = p.c;
-      fxc.fillRect(-p.r, -p.r, p.r*2.2, p.r*2.2);
-      fxc.restore();
+      if (p.kind === 'confetti') {
+        fxc.save();
+        fxc.globalAlpha = p.a;
+        fxc.translate(p.x, p.y);
+        fxc.rotate(p.rot || 0);
+        fxc.fillStyle = p.c || '#1877F2';
+        fxc.fillRect(-p.r, -p.r, p.r*2.2, p.r*2.2);
+        fxc.restore();
+        continue;
+      }
+
+      if (p.kind === 'star') {
+        fxc.save();
+        fxc.globalAlpha = p.a;
+        fxc.translate(p.x, p.y);
+        fxc.rotate(p.rot || 0);
+        const r = p.r || 6;
+        fxc.fillStyle = 'rgba(247,185,40,0.95)';
+        fxc.beginPath();
+        for (let i=0;i<5;i++){
+          const a1 = (i * 2 * Math.PI) / 5;
+          const a2 = a1 + Math.PI / 5;
+          fxc.lineTo(Math.cos(a1) * r, Math.sin(a1) * r);
+          fxc.lineTo(Math.cos(a2) * (r*0.45), Math.sin(a2) * (r*0.45));
+        }
+        fxc.closePath();
+        fxc.fill();
+        fxc.restore();
+        continue;
+      }
+
+      if (p.kind === 'bubble') {
+        fxc.save();
+        fxc.globalAlpha = p.a;
+        fxc.strokeStyle = 'rgba(45,136,255,0.55)';
+        fxc.lineWidth = 2 * devicePixelRatio;
+        fxc.beginPath();
+        fxc.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        fxc.stroke();
+        fxc.restore();
+        continue;
+      }
+
+      if (p.kind === 'slime') {
+        fxc.save();
+        fxc.globalAlpha = p.a;
+        fxc.fillStyle = 'rgba(66,183,42,0.85)';
+        fxc.beginPath();
+        fxc.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        fxc.fill();
+        fxc.restore();
+        continue;
+      }
     }
 
     requestAnimationFrame(tickFx);
@@ -380,5 +483,8 @@
     primeSamples,
     sfx,
     spawnConfetti,
+    spawnStars,
+    spawnBubbles,
+    spawnSlime,
   };
 })();

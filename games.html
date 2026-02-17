@@ -3,108 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="color-scheme" content="light" />
-  <meta name="description" content="SpingoWiki Games — real meme arcade games with your own sound pack." />
-  <title>SpingoWiki Games</title>
-
-  <link rel="preload" href="styles.css" as="style" />
-  <link rel="stylesheet" href="styles.css" />
+  <meta http-equiv="refresh" content="0; url=index.html#/arcade" />
+  <link rel="canonical" href="index.html#/arcade" />
+  <title>Redirecting…</title>
+  <script>
+    try { location.replace('index.html#/arcade'); } catch (_) {}
+  </script>
 </head>
 <body>
-  <a class="skip" href="#content">Skip to content</a>
-
-  <header class="mw-top" aria-label="Games header">
-    <div class="mw-top__left">
-      <a class="mw-mark mw-mark--link" href="index.html" aria-label="Back to SpingoWiki">SW</a>
-      <div class="mw-brand">
-        <div class="mw-brand__name">Meme Arcade</div>
-        <div class="mw-brand__tag">No references. Just memes.</div>
-      </div>
-    </div>
-
-    <div class="mw-top__mid" aria-label="Note">
-      <div class="mw-note mw-note--inline">Sound is off until you toggle it (browser rules).</div>
-    </div>
-
-    <div class="mw-top__right" aria-label="Controls">
-      <div class="mw-controls">
-        <button class="mw-btn" id="btn-mode-spingo" type="button">Spingo</button>
-        <button class="mw-btn" id="btn-mode-jimbo" type="button">Jimbo</button>
-        <button class="mw-btn" id="btn-mode-shronk" type="button">Shronk</button>
-      </div>
-      <div class="mw-controls">
-        <button class="mw-btn" id="btn-sound" type="button" aria-pressed="false">Sound: Off</button>
-        <button class="mw-btn" id="btn-mute" type="button" aria-pressed="false">Mute: Off</button>
-        <label class="mw-vol" for="vol">
-          <span class="mw-vol__label">Vol</span>
-          <input id="vol" type="range" min="0" max="100" value="70" />
-        </label>
-      </div>
-    </div>
-  </header>
-
-  <main id="content" class="mw-content mw-content--wide" aria-label="Games content">
-    <div class="mw-toast" id="toast" role="status" aria-live="polite">Pick a game. Turn sound on.</div>
-
-    <article class="mw-article">
-      <header class="mw-article__head">
-        <h1 class="mw-h1">Meme Arcade</h1>
-        <div class="mw-sub">Three real games. No “editor” vibes.</div>
-      </header>
-
-      <section class="games" aria-label="Games">
-        <article class="gcard">
-          <div class="gcard__title">1) Whack-a-Meme</div>
-          <p class="mw-p">Click the stamps before they vanish. Combos happen accidentally.</p>
-          <div class="gbar">
-            <button class="mw-btn mw-btn--primary" id="whack-start" type="button">Start</button>
-            <button class="mw-btn" id="whack-stop" type="button">Stop</button>
-            <span class="gstat">Score: <strong id="whack-score">0</strong></span>
-            <span class="gstat">Misses: <strong id="whack-miss">0</strong></span>
-          </div>
-          <canvas class="gcanvas" id="whack-canvas" aria-label="Whack-a-Meme canvas"></canvas>
-        </article>
-
-        <article class="gcard">
-          <div class="gcard__title">2) Reaction Roulette</div>
-          <p class="mw-p">It will bait you. Wait for NOW. Click fast.</p>
-          <div class="gbar">
-            <button class="mw-btn mw-btn--primary" id="rr-start" type="button">Start</button>
-            <button class="mw-btn" id="rr-stop" type="button">Stop</button>
-            <span class="gstat">Best: <strong id="rr-best">—</strong></span>
-            <span class="gstat">Avg: <strong id="rr-avg">—</strong></span>
-          </div>
-          <div class="firewall">
-            <div class="req" id="rr-status" aria-label="Status">Press Start.</div>
-            <div class="row">
-              <button class="mw-btn mw-btn--primary" id="rr-click" type="button">CLICK</button>
-            </div>
-            <div class="mw-note">Too early = clown. Too late = skill issue.</div>
-          </div>
-        </article>
-
-        <article class="gcard">
-          <div class="gcard__title">3) Meme Match</div>
-          <p class="mw-p">Memory game. Find pairs. Pretend you’re fine.</p>
-          <div class="gbar">
-            <button class="mw-btn mw-btn--primary" id="mm-new" type="button">New game</button>
-            <span class="gstat">Moves: <strong id="mm-moves">0</strong></span>
-            <span class="gstat">Matches: <strong id="mm-matches">0</strong></span>
-          </div>
-          <div class="mm-grid" id="mm-grid" aria-label="Meme Match grid"></div>
-        </article>
-      </section>
-
-      <footer class="mw-footer">
-        <div class="mw-footer__row">Tip: add your own samples in <code>assets/sfx/</code> for real sounds.</div>
-        <div class="mw-footer__row">Type: spingo/jimbo/shronk (or your aliases). Konami still exists.</div>
-      </footer>
-    </article>
-  </main>
-
-  <canvas id="fx" class="fx" aria-hidden="true"></canvas>
-
-  <script src="core.js" defer></script>
-  <script src="games.js" defer></script>
+  <p>Redirecting to <a href="index.html#/arcade">Memetown Arcade</a>…</p>
 </body>
 </html>

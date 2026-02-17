@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="Memetown Arcade — embedded minigames." />
+  <title>Memetown Arcade</title>
+
+  <link rel="stylesheet" href="social.css" />
+  <style>
+    body{ background: transparent; }
+    .wrap{ padding: 0; }
+    .mw-toast{ margin: 0 0 12px; padding: 10px 12px; border-radius: var(--r); border: 1px solid var(--line); background: color-mix(in srgb, var(--panel) 90%, var(--text) 10%); color: var(--muted); }
+
+    .games{ display: grid; gap: 12px; }
+    .gcard{ border: 1px solid var(--line); background: var(--panel); border-radius: var(--r); padding: 14px; box-shadow: var(--shadow); }
+    .gcard__title{ font-weight: 950; }
+    .mw-p{ color: var(--muted); margin: 6px 0 0; }
+
+    .gbar{ display:flex; flex-wrap: wrap; gap: 10px; align-items:center; margin-top: 10px; }
+    .gstat{ color: var(--muted); font-size: 12.5px; }
+
+    .mw-btn{ border: 1px solid var(--line); background: var(--panel); color: var(--text); padding: 10px 12px; border-radius: var(--r2); cursor: pointer; font-weight: 950; }
+    .mw-btn:hover{ background: color-mix(in srgb, var(--panel) 85%, var(--accent) 15%); }
+    .mw-btn--primary{ border-color: color-mix(in srgb, var(--accent) 60%, var(--line)); background: color-mix(in srgb, var(--panel) 78%, var(--accent) 22%); }
+
+    .gcanvas{ width: 100%; height: 240px; border-radius: var(--r); border: 1px solid var(--line); background: color-mix(in srgb, var(--panel) 85%, var(--text) 15%); margin-top: 10px; }
+
+    .firewall{ margin-top: 10px; border-radius: var(--r); border: 1px dashed var(--line); padding: 12px; background: color-mix(in srgb, var(--panel) 92%, var(--text) 8%); }
+    .req{ font-weight: 950; margin-bottom: 10px; }
+    .mw-note{ color: var(--muted); font-size: 12.5px; margin-top: 10px; }
+
+    .mm-grid{ display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+    .mm-card{ border: 1px solid var(--line); background: var(--panel); color: var(--muted); padding: 12px; border-radius: var(--r2); cursor:pointer; font-weight: 950; min-height: 46px; }
+    .mm-card.is-up{ background: color-mix(in srgb, var(--panel) 75%, var(--accent) 25%); color: var(--text); border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); }
+    .mm-card.is-done{ opacity: 0.65; }
+
+    @media (max-width: 520px){
+      .mm-grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap" aria-label="Memetown Arcade">
+    <div class="mw-toast" id="toast" role="status" aria-live="polite">Pick a game.</div>
+
+    <section class="games" aria-label="Games">
+      <article class="gcard">
+        <div class="gcard__title">1) Whack-a-Meme</div>
+        <p class="mw-p">Click the stamps before they vanish.</p>
+        <div class="gbar">
+          <button class="mw-btn mw-btn--primary" id="whack-start" type="button">Start</button>
+          <button class="mw-btn" id="whack-stop" type="button">Stop</button>
+          <span class="gstat">Score: <strong id="whack-score">0</strong></span>
+          <span class="gstat">Misses: <strong id="whack-miss">0</strong></span>
+        </div>
+        <canvas class="gcanvas" id="whack-canvas" aria-label="Whack-a-Meme canvas"></canvas>
+      </article>
+
+      <article class="gcard">
+        <div class="gcard__title">2) Reaction Roulette</div>
+        <p class="mw-p">Wait for NOW. Click fast.</p>
+        <div class="gbar">
+          <button class="mw-btn mw-btn--primary" id="rr-start" type="button">Start</button>
+          <button class="mw-btn" id="rr-stop" type="button">Stop</button>
+          <span class="gstat">Best: <strong id="rr-best">—</strong></span>
+          <span class="gstat">Avg: <strong id="rr-avg">—</strong></span>
+        </div>
+        <div class="firewall">
+          <div class="req" id="rr-status" aria-label="Status">Press Start.</div>
+          <div class="row">
+            <button class="mw-btn mw-btn--primary" id="rr-click" type="button">CLICK</button>
+          </div>
+          <div class="mw-note">Too early = clown. Too late = skill issue.</div>
+        </div>
+      </article>
+
+      <article class="gcard">
+        <div class="gcard__title">3) Meme Match</div>
+        <p class="mw-p">Memory game. Find pairs.</p>
+        <div class="gbar">
+          <button class="mw-btn mw-btn--primary" id="mm-new" type="button">New game</button>
+          <span class="gstat">Moves: <strong id="mm-moves">0</strong></span>
+          <span class="gstat">Matches: <strong id="mm-matches">0</strong></span>
+        </div>
+        <div class="mm-grid" id="mm-grid" aria-label="Meme Match grid"></div>
+      </article>
+    </section>
+  </main>
+
+  <canvas id="fx" class="fx" aria-hidden="true"></canvas>
+
+  <script src="core.js" defer></script>
+  <script src="games.js" defer></script>
+</body>
+</html>
