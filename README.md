@@ -1,31 +1,14 @@
-# iiZappy/website
+# Klonkie's Social
 
-SpingoWiki: a Wikipedia-ish meme portal with original mascots + a mini game arcade.
+A static front-end social media style site (GitHub Pages friendly) with real auth + database via Firebase.
 
-## Mascots (original)
-- **Spingo** — yellow chaos energy
-- **Jimbo** — boy-genius sci‑fi energy
-- **Shronk** — green swamp-tank energy
+## What you get
+- Email+password register/login with email verification
+- Verified-only access to the app
+- Topics: arma, arma-scripting, memes, clown, rocket-league, eggnog, dutch-memes, top-memes-2026
+- Feed + trending + create post
+- Avatar upload (Firebase Storage)
+- Local-only SFX (procedural), optional sample pack in `assets/sfx/`
 
-## Sounds (your files)
-This repo is wired for **real audio samples** if you add your own files (that you have the rights to use).
-
-Put your sounds in:
-- `assets/sfx/`
-
-Expected filenames (mp3/ogg/wav are fine):
-- `bubble.*`
-- `zap.*`
-- `horn.*`
-- `whoosh.*`
-- `slap.*`
-- `splat.*`
-- `laugh.*`
-- `success.*`
-- `error.*`
-
-If a sample is missing, the site falls back to procedural WebAudio so buttons still make noise.
-
-Pages:
-- `index.html` — SpingoWiki (wiki layout + meme tools)
-- `games.html` — Meme Arcade (real games, no Arma references)
+## Setup (Firebase)
+See `FIREBASE_SETUP.md`.

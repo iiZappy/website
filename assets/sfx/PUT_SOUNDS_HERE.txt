@@ -1,15 +1,12 @@
 Put your OWN sound files here (that you have the rights to use).
 
-Expected base names (extension can be .mp3, .ogg, or .wav):
-- bubble
-- zap
-- horn
-- whoosh
-- slap
-- splat
-- laugh
-- success
-- error
+This build is now a social app, so you can add multiple variants too:
 
-Example:
-- assets/sfx/horn.mp3
+Examples:
+- assets/sfx/like_1.mp3
+- assets/sfx/like_2.mp3
+- assets/sfx/notif_1.ogg
+- assets/sfx/tab_1.wav
+
+Legacy names still work:
+- bubble, zap, horn, whoosh, slap, splat, laugh, success, error
