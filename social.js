@@ -113,9 +113,25 @@ function bootTheme(){
   });
 }
 
+function setAuthStatus(text, mood='muted'){
+  const s = document.getElementById('auth-status');
+  if (!s) return;
+  s.className = `small ${mood}`;
+  s.textContent = text;
+}
+
+function setAuthBusy(busy){
+  const ids = ['auth-email','auth-pass','auth-handle','auth-name','do-login','do-register'];
+  ids.forEach(id => {
+    const n = document.getElementById(id);
+    if (!n) return;
+    n.disabled = !!busy;
+  });
+}
+
 function showAuthModal(){
   const html = `
-    <div class="muted small">Email verification is required.</div>
+    <div id="auth-status" class="small muted">Login or create an account. Verification email might land in spam/junk.</div>
     <div style="margin-top:10px; display:grid; gap:10px;">
       <input id="auth-email" class="input" placeholder="Email" type="email" autocomplete="email" />
       <input id="auth-pass" class="input" placeholder="Password" type="password" autocomplete="current-password" />
@@ -125,7 +141,6 @@ function showAuthModal(){
         <button id="do-login" class="btn btn--primary" type="button">Login</button>
         <button id="do-register" class="btn" type="button">Register</button>
       </div>
-      <div class="muted small">If you register, we’ll send a verification email.</div>
     </div>
   `;
 
@@ -137,26 +152,34 @@ function showAuthModal(){
     const handle = document.getElementById('auth-handle');
     const name = document.getElementById('auth-name');
 
-    document.getElementById('do-login')?.addEventListener('click', async () => {
+    const login = async () => {
       C?.sfx('tab');
+      setAuthStatus('Logging in…', 'muted');
+      setAuthBusy(true);
       try {
         await signInWithEmailAndPassword(auth, (email.value||'').trim(), pass.value||'');
         toast('Logged in.', 'ok');
         C?.sfx('success');
-        document.getElementById('modal')?.close();
+        C?.closeModal?.();
       } catch (e) {
+        setAuthStatus(`Login failed: ${e?.code || e?.message || e}`, 'muted');
         toast(`Login failed: ${e?.code || e?.message || e}`, 'danger');
         C?.sfx('error');
+      } finally {
+        setAuthBusy(false);
       }
-    });
+    };
 
-    document.getElementById('do-register')?.addEventListener('click', async () => {
+    const register = async () => {
       C?.sfx('tab');
+      setAuthStatus('Creating account…', 'muted');
+      setAuthBusy(true);
       try {
         const cred = await createUserWithEmailAndPassword(auth, (email.value||'').trim(), pass.value||'');
         if (name.value?.trim()) {
           await updateProfile(cred.user, { displayName: name.value.trim() });
         }
+
         await sendEmailVerification(cred.user);
 
         const uid = cred.user.uid;
@@ -172,15 +195,27 @@ function showAuthModal(){
 
         await setDoc(doc(db, 'users', uid), profile, { merge: true });
 
-        toast('Registered. Check your email for verification.', 'warn');
+        toast('Registered. Check your email (spam/junk) for verification.', 'warn');
         C?.sfx('notif');
-        document.getElementById('modal')?.close();
+        C?.closeModal?.();
       } catch (e) {
+        setAuthStatus(`Register failed: ${e?.code || e?.message || e}`, 'muted');
         toast(`Register failed: ${e?.code || e?.message || e}`, 'danger');
         C?.sfx('error');
+      } finally {
+        setAuthBusy(false);
       }
+    };
+
+    document.getElementById('do-login')?.addEventListener('click', login);
+    document.getElementById('do-register')?.addEventListener('click', register);
+
+    // Enter-to-login in password field
+    pass?.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Enter') { ev.preventDefault(); login(); }
     });
-  }, 50);
+
+  }, 20);
 }
 
 async function ensureProfile(user){
@@ -197,6 +232,10 @@ async function ensureProfile(user){
   };
   await setDoc(ref, profile, { merge: true });
   return profile;
+}
+
+function canInteract(){
+  return !!(meUser && meUser.emailVerified);
 }
 
 function renderPost(p){
@@ -227,8 +266,20 @@ function renderPost(p){
     </div>
   `;
 
-  wrap.querySelector('[data-act="like"]')?.addEventListener('click', async () => {
-    if (!meUser) return;
+  const likeBtn = wrap.querySelector('[data-act="like"]');
+  const commentBtn = wrap.querySelector('[data-act="comment"]');
+  const shareBtn = wrap.querySelector('[data-act="share"]');
+
+  if (!canInteract()) {
+    if (likeBtn) likeBtn.disabled = true;
+    if (commentBtn) commentBtn.disabled = true;
+  }
+
+  likeBtn?.addEventListener('click', async () => {
+    if (!canInteract()) {
+      toast('Verify your email to like posts.', 'warn');
+      return;
+    }
     C?.sfx('like');
     try {
       await likePost(p.id);
@@ -239,12 +290,16 @@ function renderPost(p){
     }
   });
 
-  wrap.querySelector('[data-act="comment"]')?.addEventListener('click', async () => {
+  commentBtn?.addEventListener('click', async () => {
+    if (!canInteract()) {
+      toast('Verify your email to comment.', 'warn');
+      return;
+    }
     C?.sfx('comment');
-    toast('Comments: next update (we’ll add threads).', 'warn');
+    toast('Comments: next update (threads).', 'warn');
   });
 
-  wrap.querySelector('[data-act="share"]')?.addEventListener('click', async () => {
+  shareBtn?.addEventListener('click', async () => {
     C?.sfx('whoosh');
     try {
       await navigator.clipboard.writeText(location.href);
@@ -301,7 +356,10 @@ async function loadFeed(){
 }
 
 async function createPost(){
-  if (!meUser) return;
+  if (!canInteract()) {
+    toast('Verify your email to post.', 'warn');
+    return;
+  }
 
   const text = (el.postText.value || '').trim();
   if (!text) {
@@ -330,7 +388,7 @@ async function createPost(){
   el.postText.value = '';
   toast('Posted.', 'ok');
   C?.sfx('post');
-  C?.spawnConfetti?.(70);
+  C?.spawnConfetti?.(60);
 
   await loadFeed();
 }
@@ -377,7 +435,7 @@ async function showProfileModal(){
       <div class="row row--wrap">
         <button id="p-save" class="btn btn--primary" type="button">Save</button>
       </div>
-      <div class="muted small">Avatar upload is in the composer (top).</div>
+      <div class="muted small">Avatar upload is in the composer.</div>
     </div>
   `;
 
@@ -398,7 +456,7 @@ async function showProfileModal(){
 
         toast('Profile saved.', 'ok');
         C?.sfx('success');
-        document.getElementById('modal')?.close();
+        C?.closeModal?.();
 
         await loadFeed();
       } catch (e) {
@@ -584,7 +642,7 @@ function wireUI(){
     if (!meUser) return;
     try {
       await sendEmailVerification(meUser);
-      toast('Verification email sent again.', 'ok');
+      toast('Verification email sent again (check spam/junk).', 'ok');
       C?.sfx('notif');
     } catch (e) {
       toast(`Resend failed: ${e?.code || e?.message || e}`, 'danger');
@@ -604,7 +662,7 @@ function wireUI(){
         el.tabs.hidden = false;
         await loadFeed();
       } else {
-        toast('Still not verified. Check your email.', 'warn');
+        toast('Still not verified. Check your email (spam/junk).', 'warn');
         C?.sfx('error');
       }
     } catch (e) {
@@ -626,7 +684,7 @@ function bootAuth(){
       el.gate.hidden = true;
       el.composer.hidden = true;
       el.tabs.hidden = true;
-      el.feed.innerHTML = `<div class="card"><div class="card__title">Verified users only</div><div class="muted small">Login/register to see the feed.</div></div>`;
+      el.feed.innerHTML = `<div class="card"><div class="card__title">Login required</div><div class="muted small">Login/register to see the feed.</div></div>`;
       return;
     }
 
@@ -634,21 +692,23 @@ function bootAuth(){
     el.btnProfile.hidden = false;
     el.btnOpenAuth.hidden = true;
 
+    const profile = await ensureProfile(user);
+    el.me.textContent = `${profile.displayName} (${profile.handle})`;
+
+    // Unverified: allow reading the feed, but disable interactions.
     if (!user.emailVerified) {
-      toast('Email not verified. Verify to continue.', 'warn');
+      toast('Verify email to post/like/comment. You can browse meanwhile.', 'warn');
       el.gate.hidden = false;
       el.composer.hidden = true;
-      el.tabs.hidden = true;
-      el.feed.innerHTML = '';
+      el.tabs.hidden = false;
+      await loadFeed();
+      await updateTrending();
       return;
     }
 
     el.gate.hidden = true;
     el.composer.hidden = false;
     el.tabs.hidden = false;
-
-    const profile = await ensureProfile(user);
-    el.me.textContent = `${profile.displayName} (${profile.handle})`;
 
     toast('Welcome. Feed loading…', 'ok');
     C?.sfx('success');
@@ -660,7 +720,7 @@ function bootAuth(){
 
 function startLoops(){
   setInterval(() => {
-    if (!meUser || !meUser.emailVerified) return;
+    if (!meUser) return;
     updateTrending();
   }, 10_000);
 
@@ -677,4 +737,4 @@ setTabs('foryou');
 bootAuth();
 startLoops();
 
-toast('Ready. Login to enter.', 'warn');
+toast('Ready.', 'ok');

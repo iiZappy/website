@@ -13,12 +13,16 @@
   <a class="skip" href="#app">Skip to content</a>
 
   <header class="top">
-    <div class="brand">
-      <div class="logo" aria-hidden="true">KS</div>
+    <div class="brand" aria-label="Brand">
+      <div class="logo" aria-hidden="true">K</div>
       <div>
         <div class="brand__name">Klonkie’s Social</div>
-        <div class="brand__tag">Social feed voor memes + games.</div>
+        <div class="brand__tag">Memes, games, Arma scripting.</div>
       </div>
+    </div>
+
+    <div class="search" role="search">
+      <input class="search__input" type="search" placeholder="Search (coming soon)" aria-label="Search" />
     </div>
 
     <nav class="nav" aria-label="Top navigation">
@@ -41,10 +45,30 @@
   </header>
 
   <main id="app" class="shell">
-    <section class="left">
+    <aside class="side side--left" aria-label="Left sidebar">
+      <div class="card">
+        <div class="card__title">Shortcuts</div>
+        <div class="muted small">Home · Topics · Profile (soon)</div>
+      </div>
+
+      <div class="card">
+        <div class="card__title">Topics</div>
+        <div class="chips" id="topics">
+          <button class="chip" data-topic="arma">arma</button>
+          <button class="chip" data-topic="arma-scripting">arma scripting</button>
+          <button class="chip" data-topic="memes">memes</button>
+          <button class="chip" data-topic="clown">clown</button>
+          <button class="chip" data-topic="rocket-league">rocket league</button>
+          <button class="chip" data-topic="eggnog">eggnog</button>
+          <button class="chip" data-topic="dutch-memes">dutch memes</button>
+        </div>
+      </div>
+    </aside>
+
+    <section class="center" aria-label="Main feed">
       <div class="card card--hero">
         <div class="hero__title">Home</div>
-        <div class="hero__sub">Verified users only.</div>
+        <div class="hero__sub">Login to post. Verify email to interact.</div>
         <div class="hero__actions">
           <button class="btn btn--primary" id="btn-open-auth" type="button">Login / Register</button>
           <button class="btn" id="btn-logout" type="button" hidden>Logout</button>
@@ -55,7 +79,7 @@
 
       <div class="card" id="gate" hidden>
         <div class="card__title">Verify your email</div>
-        <p class="muted">Je account is gemaakt, maar je moet je mail bevestigen. Daarna pas toegang.</p>
+        <p class="muted">Check your inbox (and spam/junk). After clicking the verify link, press “I verified”.</p>
         <div class="row">
           <button class="btn btn--primary" id="btn-resend" type="button">Resend verification</button>
           <button class="btn" id="btn-ive-verified" type="button">I verified</button>
@@ -68,7 +92,7 @@
           <div class="composer__meta" id="me">—</div>
         </div>
 
-        <textarea id="post-text" class="composer__text" placeholder="Drop memes, Arma scripting, Rocket League…" maxlength="1200"></textarea>
+        <textarea id="post-text" class="composer__text" placeholder="What’s on your mind?" maxlength="1200"></textarea>
 
         <div class="row row--wrap">
           <select id="post-topic" class="input">
@@ -84,13 +108,13 @@
 
           <label class="file">
             <input id="avatar-file" type="file" accept="image/*" />
-            <span>Avatar upload</span>
+            <span>Avatar</span>
           </label>
 
           <button class="btn btn--primary" id="btn-post" type="button">Post</button>
         </div>
 
-        <div class="muted small">Avatar upload = je profiel. Posts zijn text + topic (media volgt).</div>
+        <div class="muted small">Media in posts komt later. Nu: text + topic.</div>
       </div>
 
       <div class="tabs" id="tabs" hidden>
@@ -102,20 +126,7 @@
       <section class="feed" id="feed" aria-label="Feed"></section>
     </section>
 
-    <aside class="right">
-      <div class="card">
-        <div class="card__title">Topics</div>
-        <div class="chips" id="topics">
-          <button class="chip" data-topic="arma">arma</button>
-          <button class="chip" data-topic="arma-scripting">arma scripting</button>
-          <button class="chip" data-topic="memes">memes</button>
-          <button class="chip" data-topic="clown">clown</button>
-          <button class="chip" data-topic="rocket-league">rocket league</button>
-          <button class="chip" data-topic="eggnog">eggnog</button>
-          <button class="chip" data-topic="dutch-memes">dutch memes</button>
-        </div>
-      </div>
-
+    <aside class="side side--right" aria-label="Right sidebar">
       <div class="card">
         <div class="card__title">Trending</div>
         <div class="muted small">Updates every 10s (random popular).</div>
@@ -130,7 +141,7 @@
 
       <div class="card">
         <div class="card__title">Sounds</div>
-        <div class="muted small">Zet meerdere varianten in <code>assets/sfx/</code> (zoals <code>like_1</code>, <code>like_2</code>, …). We randomize nu zonder repeats.</div>
+        <div class="muted small">Zet meerdere varianten in <code>assets/sfx/</code> (zoals <code>like_1</code>, <code>like_2</code>, …).</div>
       </div>
     </aside>
   </main>

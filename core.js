@@ -1,4 +1,4 @@
-/* Shared core: state, mode, pro-ish toasts, SFX (procedural + optional samples), FX canvas */
+/* Shared core: state, mode, toasts, SFX (procedural + optional samples), FX canvas, modal helpers */
 
 (() => {
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -24,6 +24,18 @@
     el.dataset.mood = mood;
   }
 
+  function closeModal(){
+    const d = $('#modal');
+    if (!d) return;
+    try {
+      if (typeof d.close === 'function') d.close();
+      else d.removeAttribute('open');
+    } catch (_) {
+      try { d.removeAttribute('open'); } catch(_) {}
+    }
+    document.body.classList.remove('modal-open');
+  }
+
   function openModal(title, html){
     const d = $('#modal');
     if (!d) return;
@@ -31,7 +43,21 @@
     const b = $('#modal-body');
     if (t) t.textContent = title;
     if (b) b.innerHTML = html;
-    if (typeof d.showModal === 'function') d.showModal();
+
+    document.body.classList.add('modal-open');
+
+    if (typeof d.showModal === 'function') {
+      try { d.showModal(); } catch(_) { d.setAttribute('open',''); }
+    } else {
+      d.setAttribute('open','');
+    }
+  }
+
+  // ensure modal-open is cleared on native close
+  const modal = $('#modal');
+  if (modal) {
+    modal.addEventListener('close', () => document.body.classList.remove('modal-open'));
+    modal.addEventListener('cancel', () => document.body.classList.remove('modal-open'));
   }
 
   // --- WebAudio + samples
@@ -57,7 +83,7 @@
     audio.master.gain.value = state.muted ? 0 : (state.sound ? state.volume : 0);
   }
 
-  // Add as many variants as you want; we now randomize WITHOUT repeating the last variant.
+  // Add as many variants as you want; we randomize WITHOUT repeating the last variant.
   const localCandidates = {
     bubble: ['assets/sfx/bubble', 'assets/sfx/ui_bubble'],
     zap: ['assets/sfx/zap', 'assets/sfx/ui_zap'],
@@ -85,7 +111,6 @@
   const lastVariantIndex = new Map();
 
   async function fetchFirstExisting(base){
-    // If base already includes an extension, fetch it directly.
     if (/\.(mp3|ogg|wav)(\?.*)?$/i.test(base)) {
       try {
         const res = await fetch(base, { cache: 'force-cache' });
@@ -94,7 +119,6 @@
       } catch (_) { return null; }
     }
 
-    // Otherwise try common extensions.
     const exts = ['.mp3', '.ogg', '.wav'];
     for (const ext of exts) {
       const url = `${base}${ext}`;
@@ -122,8 +146,6 @@
     sampleLoading.add(type);
     try {
       const out = [];
-
-      // Load ALL variants that exist.
       for (const base of pool) {
         const buf = await fetchFirstExisting(base);
         if (!buf) continue;
@@ -133,11 +155,8 @@
         } catch (_) {}
       }
 
-      if (!out.length) {
-        sampleBroken.add(type);
-      } else {
-        sampleCache.set(type, out);
-      }
+      if (!out.length) sampleBroken.add(type);
+      else sampleCache.set(type, out);
     } finally {
       sampleLoading.delete(type);
     }
@@ -150,7 +169,6 @@
     const last = lastVariantIndex.get(type);
     let idx = Math.floor(Math.random() * arr.length);
 
-    // no immediate repeat
     if (typeof last === 'number' && arr.length > 1 && idx === last) {
       idx = (idx + 1 + Math.floor(Math.random() * (arr.length - 1))) % arr.length;
     }
@@ -195,7 +213,6 @@
   function sfx(type){
     if (!state.sound || state.muted) return;
 
-    // Try local samples first.
     if (playSample(type)) return;
     loadSample(type);
 
@@ -236,23 +253,6 @@
       o.stop(now + dur + 0.02);
     };
 
-    if (type === 'bubble'){
-      blip(520 + Math.random()*160, 180 + Math.random()*60, 0.10, 'sine', 0.16);
-      if (!prefersReduced) spawnBubbles(14);
-      return;
-    }
-    if (type === 'zap'){
-      blip(1600, 140, 0.12, 'sawtooth', 0.18);
-      blip(260, 2200, 0.06, 'square', 0.12);
-      if (!prefersReduced) spawnStars(60);
-      return;
-    }
-    if (type === 'horn'){
-      blip(120, 92, 0.24, 'triangle', 0.18);
-      blip(240, 120, 0.24, 'triangle', 0.12);
-      if (!prefersReduced) spawnConfetti(140);
-      return;
-    }
     if (type === 'whoosh'){
       const n = noise(0.20, 0.22);
       const flt = a.ctx.createBiquadFilter();
@@ -268,36 +268,7 @@
       n.stop(now + 0.22);
       return;
     }
-    if (type === 'slap'){
-      const n = noise(0.06, 0.34);
-      const flt = a.ctx.createBiquadFilter();
-      flt.type = 'highpass';
-      flt.frequency.value = 900;
-      const gg = g();
-      env(gg, now, 0.002, 0.10, 0.18);
-      n.connect(flt);
-      flt.connect(gg);
-      gg.connect(a.master);
-      n.start(now);
-      n.stop(now + 0.09);
-      return;
-    }
-    if (type === 'splat'){
-      blip(210, 60, 0.18, 'sine', 0.16);
-      const n = noise(0.11, 0.20);
-      const flt = a.ctx.createBiquadFilter();
-      flt.type = 'lowpass';
-      flt.frequency.value = 700;
-      const gg = g();
-      env(gg, now, 0.006, 0.18, 0.12);
-      n.connect(flt);
-      flt.connect(gg);
-      gg.connect(a.master);
-      n.start(now);
-      n.stop(now + 0.16);
-      if (!prefersReduced) spawnSlime(14);
-      return;
-    }
+
     if (type === 'error'){
       blip(210, 150, 0.14, 'square', 0.18);
       blip(150, 90, 0.18, 'square', 0.18);
@@ -306,46 +277,6 @@
     if (type === 'success'){
       blip(640, 960, 0.12, 'square', 0.14);
       blip(960, 1320, 0.10, 'square', 0.11);
-      return;
-    }
-    if (type === 'laugh'){
-      for (let i=0;i<4;i++){
-        const t = now + i * 0.085;
-        const o = a.ctx.createOscillator();
-        o.type = 'square';
-        o.frequency.setValueAtTime(260 + Math.random()*160, t);
-        const gg = a.ctx.createGain();
-        gg.gain.setValueAtTime(0.0001, t);
-        gg.gain.exponentialRampToValueAtTime(0.14, t + 0.012);
-        gg.gain.exponentialRampToValueAtTime(0.0001, t + 0.07);
-        o.connect(gg);
-        gg.connect(a.master);
-        o.start(t);
-        o.stop(t + 0.08);
-      }
-      const n = noise(0.22, 0.09);
-      const gg = g();
-      env(gg, now, 0.01, 0.24, 0.10);
-      n.connect(gg);
-      gg.connect(a.master);
-      n.start(now);
-      n.stop(now + 0.24);
-      return;
-    }
-
-    if (type === 'like'){
-      blip(880 + Math.random()*120, 420, 0.08, 'sine', 0.16);
-      if (!prefersReduced) spawnStars(22);
-      return;
-    }
-    if (type === 'comment'){
-      blip(620, 980, 0.07, 'square', 0.11);
-      return;
-    }
-    if (type === 'follow'){
-      blip(520, 1040, 0.12, 'triangle', 0.12);
-      blip(1040, 1520, 0.10, 'triangle', 0.08);
-      if (!prefersReduced) spawnConfetti(36);
       return;
     }
     if (type === 'notif'){
@@ -357,17 +288,8 @@
       sfx('whoosh');
       return;
     }
-    if (type === 'post'){
-      blip(380, 820, 0.16, 'sawtooth', 0.12);
-      if (!prefersReduced) spawnBubbles(8);
-      return;
-    }
-    if (type === 'refresh'){
-      sfx('whoosh');
-      blip(2200, 600, 0.10, 'square', 0.08);
-      return;
-    }
 
+    // fallback
     blip(520, 420, 0.08, 'sine', 0.10);
   }
 
@@ -384,82 +306,25 @@
   window.addEventListener('resize', resizeFx);
   resizeFx();
 
-  function spawnConfetti(count = 120){
+  function spawnConfetti(count = 80){
     if (!fx) return;
     const w = fx.width;
     const h = fx.height;
-    const colors = ['#ff5c8a', '#ffd37c', '#7cf3ff', '#a8ffcb', '#fff27c', '#111111'];
+    const colors = ['#1877F2', '#F02849', '#42B72A', '#F7B928', '#111111'];
     const c = prefersReduced ? Math.floor(count * 0.4) : count;
     for (let i=0;i<c;i++){
       parts.push({
         kind: 'confetti',
         x: w * (0.2 + Math.random() * 0.6),
-        y: h * (0.12 + Math.random() * 0.15),
-        vx: (Math.random()-0.5) * 7,
-        vy: Math.random() * -7 - 2,
+        y: h * (0.10 + Math.random() * 0.10),
+        vx: (Math.random()-0.5) * 6,
+        vy: Math.random() * -6 - 2,
         g: 0.16 + Math.random() * 0.14,
         r: 2 + Math.random() * 4,
         a: 1,
         rot: Math.random() * Math.PI,
-        vr: (Math.random()-0.5) * 0.28,
+        vr: (Math.random()-0.5) * 0.25,
         c: rand(colors)
-      });
-    }
-  }
-
-  function spawnBubbles(count = 22){
-    if (!fx) return;
-    const w = fx.width;
-    const h = fx.height;
-    const c = prefersReduced ? Math.floor(count * 0.4) : count;
-    for (let i=0;i<c;i++){
-      parts.push({
-        kind: 'bubble',
-        x: (Math.random() * w),
-        y: h + Math.random() * h * 0.12,
-        vx: (Math.random()-0.5) * 0.9,
-        vy: -(1.2 + Math.random() * 2.6),
-        r: 3 + Math.random() * 11,
-        a: 0.9,
-        c: 'rgba(124,243,255,0.62)'
-      });
-    }
-  }
-
-  function spawnStars(count = 60){
-    if (!fx) return;
-    const w = fx.width;
-    const h = fx.height;
-    const c = prefersReduced ? Math.floor(count * 0.4) : count;
-    for (let i=0;i<c;i++){
-      parts.push({
-        kind: 'star',
-        x: w * 0.5 + (Math.random()-0.5) * w * 0.60,
-        y: h * 0.22 + (Math.random()-0.5) * h * 0.22,
-        vx: (Math.random()-0.5) * 10,
-        vy: (Math.random()-0.5) * 10,
-        r: 1 + Math.random() * 2.8,
-        a: 1,
-        c: rand(['#7cf3ff', '#fff27c', '#ffffff', '#ff5c8a'])
-      });
-    }
-  }
-
-  function spawnSlime(count = 18){
-    if (!fx) return;
-    const w = fx.width;
-    const h = fx.height;
-    const c = prefersReduced ? Math.floor(count * 0.4) : count;
-    for (let i=0;i<c;i++){
-      parts.push({
-        kind: 'slime',
-        x: w * 0.5 + (Math.random()-0.5) * w * 0.45,
-        y: h * 0.30 + (Math.random()-0.5) * h * 0.24,
-        vx: (Math.random()-0.5) * 6,
-        vy: (Math.random()-0.5) * 2,
-        r: 4 + Math.random() * 12,
-        a: 0.85,
-        c: 'rgba(168,255,203,0.50)'
       });
     }
   }
@@ -474,68 +339,21 @@
     parts = parts.filter(p => p.a > 0.02);
 
     for (const p of parts){
-      if (p.kind === 'confetti'){
-        p.vy += p.g;
-        p.x += p.vx;
-        p.y += p.vy;
-        p.rot += p.vr;
-        p.a *= 0.985;
+      if (p.kind !== 'confetti') continue;
 
-        fxc.save();
-        fxc.globalAlpha = p.a;
-        fxc.translate(p.x, p.y);
-        fxc.rotate(p.rot);
-        fxc.fillStyle = p.c;
-        fxc.fillRect(-p.r, -p.r, p.r*2.2, p.r*2.2);
-        fxc.restore();
-        continue;
-      }
+      p.vy += p.g;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.vr;
+      p.a *= 0.985;
 
-      if (p.kind === 'bubble'){
-        p.x += p.vx;
-        p.y += p.vy;
-        p.a *= 0.992;
-
-        fxc.save();
-        fxc.globalAlpha = p.a;
-        fxc.strokeStyle = p.c;
-        fxc.lineWidth = 2 * devicePixelRatio;
-        fxc.beginPath();
-        fxc.arc(p.x, p.y, p.r * devicePixelRatio, 0, Math.PI * 2);
-        fxc.stroke();
-        fxc.restore();
-        continue;
-      }
-
-      if (p.kind === 'star'){
-        p.x += p.vx;
-        p.y += p.vy;
-        p.a *= 0.965;
-
-        fxc.save();
-        fxc.globalAlpha = p.a;
-        fxc.fillStyle = p.c;
-        fxc.beginPath();
-        fxc.arc(p.x, p.y, p.r * devicePixelRatio, 0, Math.PI * 2);
-        fxc.fill();
-        fxc.restore();
-        continue;
-      }
-
-      if (p.kind === 'slime'){
-        p.x += p.vx;
-        p.y += p.vy;
-        p.a *= 0.975;
-
-        fxc.save();
-        fxc.globalAlpha = p.a;
-        fxc.fillStyle = p.c;
-        fxc.beginPath();
-        fxc.arc(p.x, p.y, p.r * devicePixelRatio, 0, Math.PI * 2);
-        fxc.fill();
-        fxc.restore();
-        continue;
-      }
+      fxc.save();
+      fxc.globalAlpha = p.a;
+      fxc.translate(p.x, p.y);
+      fxc.rotate(p.rot);
+      fxc.fillStyle = p.c;
+      fxc.fillRect(-p.r, -p.r, p.r*2.2, p.r*2.2);
+      fxc.restore();
     }
 
     requestAnimationFrame(tickFx);
@@ -556,13 +374,11 @@
     rand,
     setToast,
     openModal,
+    closeModal,
     setMode,
     setVolume,
     primeSamples,
     sfx,
     spawnConfetti,
-    spawnBubbles,
-    spawnStars,
-    spawnSlime,
   };
 })();
