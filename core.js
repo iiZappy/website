@@ -57,6 +57,7 @@
     audio.master.gain.value = state.muted ? 0 : (state.sound ? state.volume : 0);
   }
 
+  // Add as many variants as you want; we now randomize WITHOUT repeating the last variant.
   const localCandidates = {
     bubble: ['assets/sfx/bubble', 'assets/sfx/ui_bubble'],
     zap: ['assets/sfx/zap', 'assets/sfx/ui_zap'],
@@ -68,18 +69,20 @@
     success: ['assets/sfx/success', 'assets/sfx/ui_success'],
     error: ['assets/sfx/error', 'assets/sfx/ui_error'],
 
-    like: ['assets/sfx/like_1', 'assets/sfx/like_2', 'assets/sfx/like_3'],
-    comment: ['assets/sfx/comment_1', 'assets/sfx/comment_2'],
-    follow: ['assets/sfx/follow_1', 'assets/sfx/follow_2'],
-    notif: ['assets/sfx/notif_1', 'assets/sfx/notif_2'],
-    tab: ['assets/sfx/tab_1', 'assets/sfx/tab_2'],
-    post: ['assets/sfx/post_1', 'assets/sfx/post_2'],
-    refresh: ['assets/sfx/refresh_1', 'assets/sfx/refresh_2'],
+    like: ['assets/sfx/like_1', 'assets/sfx/like_2', 'assets/sfx/like_3', 'assets/sfx/like_4'],
+    comment: ['assets/sfx/comment_1', 'assets/sfx/comment_2', 'assets/sfx/comment_3'],
+    follow: ['assets/sfx/follow_1', 'assets/sfx/follow_2', 'assets/sfx/follow_3'],
+    notif: ['assets/sfx/notif_1', 'assets/sfx/notif_2', 'assets/sfx/notif_3'],
+    tab: ['assets/sfx/tab_1', 'assets/sfx/tab_2', 'assets/sfx/tab_3'],
+    post: ['assets/sfx/post_1', 'assets/sfx/post_2', 'assets/sfx/post_3'],
+    refresh: ['assets/sfx/refresh_1', 'assets/sfx/refresh_2', 'assets/sfx/refresh_3'],
   };
 
+  // type -> AudioBuffer[]
   const sampleCache = new Map();
   const sampleBroken = new Set();
   const sampleLoading = new Set();
+  const lastVariantIndex = new Map();
 
   async function fetchFirstExisting(base){
     // If base already includes an extension, fetch it directly.
@@ -105,7 +108,8 @@
   }
 
   async function loadSample(type){
-    if (sampleBroken.has(type) || sampleCache.has(type) || sampleLoading.has(type)) return;
+    if (sampleBroken.has(type) || sampleLoading.has(type)) return;
+
     const a = audioInit();
     if (!a) return;
 
@@ -117,22 +121,42 @@
 
     sampleLoading.add(type);
     try {
-      // try all candidates until one loads
+      const out = [];
+
+      // Load ALL variants that exist.
       for (const base of pool) {
         const buf = await fetchFirstExisting(base);
         if (!buf) continue;
-        const decoded = await a.ctx.decodeAudioData(buf.slice(0));
-        sampleCache.set(type, decoded);
-        sampleLoading.delete(type);
-        return;
+        try {
+          const decoded = await a.ctx.decodeAudioData(buf.slice(0));
+          out.push(decoded);
+        } catch (_) {}
       }
 
-      sampleBroken.add(type);
-    } catch (_) {
-      sampleBroken.add(type);
+      if (!out.length) {
+        sampleBroken.add(type);
+      } else {
+        sampleCache.set(type, out);
+      }
     } finally {
       sampleLoading.delete(type);
     }
+  }
+
+  function pickVariant(type, arr){
+    if (!arr || !arr.length) return null;
+    if (arr.length === 1) return { buf: arr[0], idx: 0 };
+
+    const last = lastVariantIndex.get(type);
+    let idx = Math.floor(Math.random() * arr.length);
+
+    // no immediate repeat
+    if (typeof last === 'number' && arr.length > 1 && idx === last) {
+      idx = (idx + 1 + Math.floor(Math.random() * (arr.length - 1))) % arr.length;
+    }
+
+    lastVariantIndex.set(type, idx);
+    return { buf: arr[idx], idx };
   }
 
   function playSample(type){
@@ -144,11 +168,14 @@
     if (a.ctx.state === 'suspended') a.ctx.resume().catch(() => {});
     a.master.gain.value = state.volume;
 
-    const buf = sampleCache.get(type);
-    if (!buf) return false;
+    const arr = sampleCache.get(type);
+    if (!arr || !arr.length) return false;
+
+    const v = pickVariant(type, arr);
+    if (!v?.buf) return false;
 
     const src = a.ctx.createBufferSource();
-    src.buffer = buf;
+    src.buffer = v.buf;
     src.connect(a.master);
     try { src.start(); } catch (_) {}
     return true;
@@ -158,7 +185,7 @@
     Object.keys(localCandidates).forEach(t => loadSample(t));
   }
 
-  // --- Procedural SFX (less "pling", more "clown UI")
+  // --- Procedural SFX (fallback)
   function env(g, now, a=0.006, d=0.14, peak=0.18){
     g.gain.setValueAtTime(0.0001, now);
     g.gain.exponentialRampToValueAtTime(peak, now + a);
@@ -168,7 +195,7 @@
   function sfx(type){
     if (!state.sound || state.muted) return;
 
-    // Try local sample first.
+    // Try local samples first.
     if (playSample(type)) return;
     loadSample(type);
 
@@ -209,7 +236,6 @@
       o.stop(now + dur + 0.02);
     };
 
-    // Old types
     if (type === 'bubble'){
       blip(520 + Math.random()*160, 180 + Math.random()*60, 0.10, 'sine', 0.16);
       if (!prefersReduced) spawnBubbles(14);
@@ -307,10 +333,9 @@
       return;
     }
 
-    // New UI types
     if (type === 'like'){
       blip(880 + Math.random()*120, 420, 0.08, 'sine', 0.16);
-      if (!prefersReduced) spawnStars(28);
+      if (!prefersReduced) spawnStars(22);
       return;
     }
     if (type === 'comment'){
@@ -320,7 +345,7 @@
     if (type === 'follow'){
       blip(520, 1040, 0.12, 'triangle', 0.12);
       blip(1040, 1520, 0.10, 'triangle', 0.08);
-      if (!prefersReduced) spawnConfetti(60);
+      if (!prefersReduced) spawnConfetti(36);
       return;
     }
     if (type === 'notif'){
@@ -334,7 +359,7 @@
     }
     if (type === 'post'){
       blip(380, 820, 0.16, 'sawtooth', 0.12);
-      if (!prefersReduced) spawnBubbles(10);
+      if (!prefersReduced) spawnBubbles(8);
       return;
     }
     if (type === 'refresh'){
@@ -343,7 +368,6 @@
       return;
     }
 
-    // fallback
     blip(520, 420, 0.08, 'sine', 0.10);
   }
 

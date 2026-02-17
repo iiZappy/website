@@ -62,6 +62,7 @@ const el = {
   btnSound: $('#btn-sound'),
   btnMute: $('#btn-mute'),
   vol: $('#vol'),
+  theme: $('#theme'),
 };
 
 let meUser = null;
@@ -92,6 +93,24 @@ function setTabs(onId){
   el.tabForYou?.classList.toggle('is-on', onId === 'foryou');
   el.tabLatest?.classList.toggle('is-on', onId === 'latest');
   el.tabTopic?.classList.toggle('is-on', onId === 'topic');
+}
+
+function applyTheme(t){
+  const theme = (t === 'light' || t === 'dark' || t === 'system') ? t : 'system';
+  document.documentElement.dataset.theme = theme;
+  try { localStorage.setItem('ks_theme', theme); } catch(_) {}
+  if (el.theme) el.theme.value = theme;
+}
+
+function bootTheme(){
+  let saved = 'system';
+  try { saved = localStorage.getItem('ks_theme') || 'system'; } catch(_) {}
+  applyTheme(saved);
+
+  el.theme?.addEventListener('change', (e) => {
+    C?.sfx('tab');
+    applyTheme(e.target.value);
+  });
 }
 
 function showAuthModal(){
@@ -140,7 +159,6 @@ function showAuthModal(){
         }
         await sendEmailVerification(cred.user);
 
-        // Create profile doc
         const uid = cred.user.uid;
         const safeHandle = (handle.value || '').trim().replace(/^@+/, '').replace(/[^a-zA-Z0-9_\.\-]/g,'').slice(0,20);
 
@@ -265,7 +283,6 @@ async function loadFeed(){
   } else if (view === 'topic' && currentTopic) {
     q = query(postsRef, where('topics', 'array-contains', currentTopic), orderBy('createdAt', 'desc'), limit(30));
   } else {
-    // For You (cheap MVP): latest 30 for now
     q = query(postsRef, orderBy('createdAt', 'desc'), limit(30));
   }
 
@@ -274,7 +291,7 @@ async function loadFeed(){
   snaps.forEach(s => items.push({ id: s.id, ...s.data() }));
 
   if (!items.length) {
-    el.feed.innerHTML = `<div class="card"><div class="card__title">No posts yet</div><div class="muted small">Create the first clown post.</div></div>`;
+    el.feed.innerHTML = `<div class="card"><div class="card__title">No posts yet</div><div class="muted small">Create the first post.</div></div>`;
     toast('No posts found.', 'warn');
     return;
   }
@@ -313,7 +330,7 @@ async function createPost(){
   el.postText.value = '';
   toast('Posted.', 'ok');
   C?.sfx('post');
-  C?.spawnConfetti?.(90);
+  C?.spawnConfetti?.(70);
 
   await loadFeed();
 }
@@ -329,7 +346,6 @@ async function likePost(postId){
     tx.update(postRef, { likeCount: increment(1) });
   });
 
-  // cheap refresh: just update trending + feed later
   updateTrending();
 }
 
@@ -354,7 +370,7 @@ async function showProfileModal(){
   const profile = await ensureProfile(meUser);
 
   const html = `
-    <div class="muted small">Update your profile. Handle is stored in Firestore.</div>
+    <div class="muted small">Update your profile.</div>
     <div style="margin-top:10px; display:grid; gap:10px;">
       <input id="p-name" class="input" placeholder="Display name" value="${escapeHtml(profile.displayName||'')}" />
       <input id="p-handle" class="input" placeholder="@handle" value="${escapeHtml(profile.handle||'')}" />
@@ -419,7 +435,7 @@ async function updateTrending(){
         <div class="post__who">
           <div class="avatar">${pick.authorPhotoURL ? `<img alt="avatar" src="${pick.authorPhotoURL}" />` : `<span>${initials(pick.authorDisplayName||'K')}</span>`}</div>
           <div>
-            <div class="handle">${escapeHtml(pick.authorDisplayName||'User')} <span class="muted">${escapeHtml(pick.authorHandle||'@clown')}</span></div>
+            <div class="handle">${escapeHtml(pick.authorDisplayName||'User')} <span class="muted">${escapeHtml(pick.authorHandle||'@user')}</span></div>
             <div class="time">❤ ${Number(pick.likeCount||0)} · <span class="topic">#${escapeHtml((pick.topics&&pick.topics[0])||'memes')}</span></div>
           </div>
         </div>
@@ -434,8 +450,6 @@ async function updateTrending(){
 }
 
 async function updateWire(){
-  // external: meme-api.com (random reddit meme) - may fail depending on network
-  // If it fails, we just show a placeholder.
   try {
     const subs = ['memes','dankmemes','RocketLeague','arma','thenetherlands'];
     const sub = subs[Math.floor(Math.random()*subs.length)];
@@ -461,7 +475,6 @@ async function updateWire(){
       </div>
     `;
 
-    // keep last 6
     el.wire.prepend(card);
     while (el.wire.children.length > 6) el.wire.lastElementChild.remove();
 
@@ -480,7 +493,6 @@ function wireUI(){
   el.btnSound?.addEventListener('click', () => {
     C.state.sound = !C.state.sound;
     el.btnSound.setAttribute('aria-pressed', C.state.sound ? 'true' : 'false');
-    el.btnSound.textContent = `Sound: ${C.state.sound ? 'On' : 'Off'}`;
     C.setVolume(C.state.volume);
     if (C.state.sound) C.primeSamples?.();
     C.sfx(C.state.sound ? 'success' : 'error');
@@ -489,7 +501,6 @@ function wireUI(){
   el.btnMute?.addEventListener('click', () => {
     C.state.muted = !C.state.muted;
     el.btnMute.setAttribute('aria-pressed', C.state.muted ? 'true' : 'false');
-    el.btnMute.textContent = `Mute: ${C.state.muted ? 'On' : 'Off'}`;
     C.setVolume(C.state.volume);
     if (!C.state.muted) C.sfx('success');
   });
@@ -608,7 +619,7 @@ function bootAuth(){
     meUser = user;
 
     if (!user) {
-      toast('Logged out. Login to enter Klonkie’s Social.', 'warn');
+      toast('Logged out. Login to enter.', 'warn');
       el.btnLogout.hidden = true;
       el.btnProfile.hidden = true;
       el.btnOpenAuth.hidden = false;
@@ -660,6 +671,7 @@ function startLoops(){
   updateWire();
 }
 
+bootTheme();
 wireUI();
 setTabs('foryou');
 bootAuth();

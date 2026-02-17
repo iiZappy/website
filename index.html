@@ -1,10 +1,9 @@
 <!doctype html>
-<html lang="nl">
+<html lang="nl" data-theme="system">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="color-scheme" content="light" />
-  <meta name="description" content="Klonkie’s Social — topics, memes, clowns, Arma, Rocket League." />
+  <meta name="description" content="Klonkie’s Social — posts, memes, Arma, Rocket League." />
   <title>Klonkie’s Social</title>
 
   <link rel="preload" href="social.css" as="style" />
@@ -18,15 +17,25 @@
       <div class="logo" aria-hidden="true">KS</div>
       <div>
         <div class="brand__name">Klonkie’s Social</div>
-        <div class="brand__tag">Leuke clowntjes. Echte posts. Hard geluid.</div>
+        <div class="brand__tag">Social feed voor memes + games.</div>
       </div>
     </div>
 
-    <nav class="nav">
+    <nav class="nav" aria-label="Top navigation">
       <a class="nav__link" href="games.html">Arcade</a>
       <a class="nav__link" href="wiki.html">Wiki</a>
-      <button class="nav__btn" id="btn-sound" type="button" aria-pressed="true">Sound: On</button>
-      <button class="nav__btn" id="btn-mute" type="button" aria-pressed="false">Mute: Off</button>
+
+      <label class="nav__select" for="theme">
+        <span>Theme</span>
+        <select id="theme" class="select">
+          <option value="system">System</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </label>
+
+      <button class="nav__btn" id="btn-sound" type="button" aria-pressed="true">Sound</button>
+      <button class="nav__btn" id="btn-mute" type="button" aria-pressed="false">Mute</button>
       <label class="vol" for="vol"><span>Vol</span><input id="vol" type="range" min="0" max="100" value="70" /></label>
     </nav>
   </header>
@@ -34,14 +43,14 @@
   <main id="app" class="shell">
     <section class="left">
       <div class="card card--hero">
-        <div class="hero__title">For You</div>
-        <div class="hero__sub">Verified users only. No lurkers.</div>
+        <div class="hero__title">Home</div>
+        <div class="hero__sub">Verified users only.</div>
         <div class="hero__actions">
           <button class="btn btn--primary" id="btn-open-auth" type="button">Login / Register</button>
           <button class="btn" id="btn-logout" type="button" hidden>Logout</button>
           <button class="btn" id="btn-profile" type="button" hidden>Profile</button>
         </div>
-        <div class="toast" id="toast" role="status" aria-live="polite">Booting Klonkie’s Social…</div>
+        <div class="toast" id="toast" role="status" aria-live="polite">Booting…</div>
       </div>
 
       <div class="card" id="gate" hidden>
@@ -59,7 +68,7 @@
           <div class="composer__meta" id="me">—</div>
         </div>
 
-        <textarea id="post-text" class="composer__text" placeholder="Drop memes, Arma scripting, clowns, eggnog takes…" maxlength="1200"></textarea>
+        <textarea id="post-text" class="composer__text" placeholder="Drop memes, Arma scripting, Rocket League…" maxlength="1200"></textarea>
 
         <div class="row row--wrap">
           <select id="post-topic" class="input">
@@ -81,7 +90,7 @@
           <button class="btn btn--primary" id="btn-post" type="button">Post</button>
         </div>
 
-        <div class="muted small">Avatar upload is your profile, not attached media yet (next). Posts are text + topic for now.</div>
+        <div class="muted small">Avatar upload = je profiel. Posts zijn text + topic (media volgt).</div>
       </div>
 
       <div class="tabs" id="tabs" hidden>
@@ -108,20 +117,20 @@
       </div>
 
       <div class="card">
-        <div class="card__title">Trending (live)</div>
-        <div class="muted small">Updates every 10s. Picks a random popular post.</div>
+        <div class="card__title">Trending</div>
+        <div class="muted small">Updates every 10s (random popular).</div>
         <div id="trending"></div>
       </div>
 
       <div class="card">
         <div class="card__title">KlonkieWire</div>
-        <div class="muted small">Every 10s we pull a random meme from an external API.</div>
+        <div class="muted small">External meme drop every 10s.</div>
         <div id="wire"></div>
       </div>
 
       <div class="card">
-        <div class="card__title">Sound tips</div>
-        <div class="muted small">This build uses procedural SFX by default. If you drop real audio in <code>assets/sfx/</code>, it will use those automatically.</div>
+        <div class="card__title">Sounds</div>
+        <div class="muted small">Zet meerdere varianten in <code>assets/sfx/</code> (zoals <code>like_1</code>, <code>like_2</code>, …). We randomize nu zonder repeats.</div>
       </div>
     </aside>
   </main>
