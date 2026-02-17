@@ -1,6 +1,6 @@
-# Klonkie's Social
+# Memetown
 
-A static front-end social media style site (GitHub Pages friendly) with real auth + database via Firebase.
+A static front-end social media style site (GitHub Pages friendly) with real auth + database via Firebase. 
 
 ## What you get
 - Email+password register/login with email verification

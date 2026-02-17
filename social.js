@@ -1,4 +1,4 @@
-// Klonkie's Social app logic
+// Memetown app logic
 
 import { auth, db, storage } from './firebase.js';
 
@@ -131,10 +131,10 @@ function fmtTime(msOrDate){
 
 function initials(name){
   const s = (name || '').trim();
-  if (!s) return 'KS';
+  if (!s) return 'MT';
   const parts = s.split(/\s+/g);
-  const a = (parts[0] || 'K')[0];
-  const b = (parts[1] || parts[0] || 'S')[0];
+  const a = (parts[0] || 'M')[0];
+  const b = (parts[1] || parts[0] || 'T')[0];
   return (a + b).toUpperCase();
 }
 
@@ -147,13 +147,13 @@ function setTabs(onId){
 function applyTheme(t){
   const theme = (t === 'light' || t === 'dark' || t === 'system') ? t : 'system';
   document.documentElement.dataset.theme = theme;
-  try { localStorage.setItem('ks_theme', theme); } catch(_) {}
+  try { localStorage.setItem('mt_theme', theme); } catch(_) {}
   if (el.theme) el.theme.value = theme;
 }
 
 function bootTheme(){
   let saved = 'system';
-  try { saved = localStorage.getItem('ks_theme') || 'system'; } catch(_) {}
+  try { saved = localStorage.getItem('mt_theme') || localStorage.getItem('ks_theme') || 'system'; } catch(_) {}
   applyTheme(saved);
 
   el.theme?.addEventListener('change', (e) => {
@@ -237,7 +237,7 @@ function showAuthModal(){
         const profile = {
           uid,
           handle: safeHandle ? `@${safeHandle}` : `@clown_${uid.slice(0,6)}`,
-          displayName: name.value?.trim() || 'Klonkie User',
+          displayName: name.value?.trim() || 'Memetown User',
           photoURL: '',
           createdAt: serverTimestamp(),
         };
@@ -274,7 +274,7 @@ async function ensureProfile(user){
   const profile = {
     uid: user.uid,
     handle: `@clown_${user.uid.slice(0,6)}`,
-    displayName: user.displayName || 'Klonkie User',
+    displayName: user.displayName || 'Memetown User',
     photoURL: user.photoURL || '',
     createdAt: serverTimestamp(),
   };
@@ -304,7 +304,7 @@ async function uploadPostMedia(file, postId){
 
 function renderPost(p){
   const topic = (p.topics && p.topics[0]) ? p.topics[0] : 'memes';
-  const name = p.authorDisplayName || 'Klonkie User';
+  const name = p.authorDisplayName || 'Memetown User';
   const handle = p.authorHandle || '@clown';
   const photo = p.authorPhotoURL || '';
   const when = p.createdAt?.toMillis ? fmtTime(p.createdAt.toMillis()) : '—';
@@ -464,7 +464,6 @@ async function createPost(){
       C?.sfx('error');
       return;
     }
-    // keep it sane for now
     const maxBytes = 12 * 1024 * 1024;
     if (mediaFile.size > maxBytes) {
       toast('File is te groot (max ~12MB).', 'warn');
@@ -575,7 +574,7 @@ async function showProfileModal(){
 
     document.getElementById('p-save')?.addEventListener('click', async () => {
       try {
-        const newName = (name.value || '').trim().slice(0, 40) || 'Klonkie User';
+        const newName = (name.value || '').trim().slice(0, 40) || 'Memetown User';
         const raw = (handle.value || '').trim().replace(/^@+/, '').replace(/[^a-zA-Z0-9_\.\-]/g,'').slice(0, 20);
         const newHandle = raw ? `@${raw}` : profile.handle;
 
@@ -619,7 +618,7 @@ async function updateTrending(){
     node.innerHTML = `
       <div class="post__top">
         <div class="post__who">
-          <div class="avatar">${pick.authorPhotoURL ? `<img alt="avatar" src="${pick.authorPhotoURL}" />` : `<span>${initials(pick.authorDisplayName||'K')}</span>`}</div>
+          <div class="avatar">${pick.authorPhotoURL ? `<img alt="avatar" src="${pick.authorPhotoURL}" />` : `<span>${initials(pick.authorDisplayName||'M')}</span>`}</div>
           <div>
             <div class="handle">${escapeHtml(pick.authorDisplayName||'User')} <span class="muted">${escapeHtml(pick.authorHandle||'@user')}</span></div>
             <div class="time">❤ ${Number(pick.likeCount||0)} · <span class="topic">#${escapeHtml((pick.topics&&pick.topics[0])||'memes')}</span></div>
@@ -668,7 +667,7 @@ async function updateWire(){
   } catch (_) {
     const msg = document.createElement('div');
     msg.className = 'muted small';
-    msg.textContent = 'KlonkieWire: external fetch failed (network/CORS).';
+    msg.textContent = 'MemeWire: external fetch failed (network/CORS).';
     el.wire.innerHTML = '';
     el.wire.appendChild(msg);
   }
