@@ -52,6 +52,7 @@ const el = {
   feed: $('#feed'),
   trending: $('#trending'),
   wire: $('#wire'),
+  alerts: $('#alerts'),
   topics: $('#topics'),
   tabForYou: $('#tab-foryou'),
   tabLatest: $('#tab-latest'),
@@ -69,8 +70,56 @@ let meUser = null;
 let currentTopic = null;
 let view = 'foryou';
 
+const spam = {
+  post: { ts: [], blockedUntil: 0 },
+  like: { ts: [], blockedUntil: 0 },
+  share: { ts: [], blockedUntil: 0 },
+};
+
 function toast(msg, mood='ok'){
   C?.setToast(msg, mood);
+}
+
+function addAlert(msg, mood='warn'){
+  if (!el.alerts) return;
+  const d = new Date();
+  const time = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  const node = document.createElement('div');
+  node.className = `alert alert--${mood}`;
+  node.innerHTML = `${escapeHtml(msg)}<div class="alert__time">${escapeHtml(time)}</div>`;
+
+  el.alerts.prepend(node);
+  while (el.alerts.children.length > 6) el.alerts.lastElementChild.remove();
+}
+
+function spamCheck(kind, limit, windowMs, blockMs){
+  const now = Date.now();
+  const s = spam[kind];
+  if (!s) return true;
+
+  if (now < s.blockedUntil) {
+    const left = Math.ceil((s.blockedUntil - now) / 1000);
+    const msg = `Rustig aan. Anti-spam: wacht ${left}s.`;
+    toast(msg, 'warn');
+    addAlert(`${kind.toUpperCase()}: ${msg}`, 'warn');
+    C?.sfx('error');
+    return false;
+  }
+
+  s.ts = s.ts.filter(t => now - t < windowMs);
+  s.ts.push(now);
+
+  if (s.ts.length > limit) {
+    s.blockedUntil = now + blockMs;
+    const msg = `Spam gedetecteerd (${kind}). Je bent even op cooldown.`;
+    toast(msg, 'danger');
+    addAlert(msg, 'danger');
+    C?.sfx('error');
+    return false;
+  }
+
+  return true;
 }
 
 function fmtTime(msOrDate){
@@ -210,7 +259,6 @@ function showAuthModal(){
     document.getElementById('do-login')?.addEventListener('click', login);
     document.getElementById('do-register')?.addEventListener('click', register);
 
-    // Enter-to-login in password field
     pass?.addEventListener('keydown', (ev) => {
       if (ev.key === 'Enter') { ev.preventDefault(); login(); }
     });
@@ -280,6 +328,9 @@ function renderPost(p){
       toast('Verify your email to like posts.', 'warn');
       return;
     }
+    if (!spamCheck('like', 8, 10_000, 15_000)) return;
+
+    if (likeBtn) likeBtn.disabled = true;
     C?.sfx('like');
     try {
       await likePost(p.id);
@@ -287,6 +338,8 @@ function renderPost(p){
     } catch (e) {
       toast(`Like failed: ${e?.code || e?.message || e}`, 'danger');
       C?.sfx('error');
+    } finally {
+      if (likeBtn && canInteract()) likeBtn.disabled = false;
     }
   });
 
@@ -300,6 +353,9 @@ function renderPost(p){
   });
 
   shareBtn?.addEventListener('click', async () => {
+    if (!spamCheck('share', 10, 10_000, 10_000)) return;
+
+    if (shareBtn) shareBtn.disabled = true;
     C?.sfx('whoosh');
     try {
       await navigator.clipboard.writeText(location.href);
@@ -308,6 +364,8 @@ function renderPost(p){
     } catch (_) {
       toast('Copy failed.', 'danger');
       C?.sfx('error');
+    } finally {
+      if (shareBtn) shareBtn.disabled = false;
     }
   });
 
@@ -360,6 +418,7 @@ async function createPost(){
     toast('Verify your email to post.', 'warn');
     return;
   }
+  if (!spamCheck('post', 3, 30_000, 30_000)) return;
 
   const text = (el.postText.value || '').trim();
   if (!text) {
@@ -368,29 +427,35 @@ async function createPost(){
     return;
   }
 
+  if (el.btnPost) el.btnPost.disabled = true;
+
   const topic = el.postTopic.value || 'memes';
 
-  const profile = await ensureProfile(meUser);
+  try {
+    const profile = await ensureProfile(meUser);
 
-  await addDoc(collection(db, 'posts'), {
-    authorUid: meUser.uid,
-    authorHandle: profile.handle,
-    authorDisplayName: profile.displayName,
-    authorPhotoURL: profile.photoURL || '',
-    text,
-    topics: [topic],
-    likeCount: 0,
-    commentCount: 0,
-    createdAt: serverTimestamp(),
-    kind: 'user',
-  });
+    await addDoc(collection(db, 'posts'), {
+      authorUid: meUser.uid,
+      authorHandle: profile.handle,
+      authorDisplayName: profile.displayName,
+      authorPhotoURL: profile.photoURL || '',
+      text,
+      topics: [topic],
+      likeCount: 0,
+      commentCount: 0,
+      createdAt: serverTimestamp(),
+      kind: 'user',
+    });
 
-  el.postText.value = '';
-  toast('Posted.', 'ok');
-  C?.sfx('post');
-  C?.spawnConfetti?.(60);
+    el.postText.value = '';
+    toast('Posted.', 'ok');
+    C?.sfx('post');
+    C?.spawnConfetti?.(60);
 
-  await loadFeed();
+    await loadFeed();
+  } finally {
+    if (el.btnPost) el.btnPost.disabled = false;
+  }
 }
 
 async function likePost(postId){
