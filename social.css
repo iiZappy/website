@@ -210,6 +210,22 @@ code{ background: color-mix(in srgb, var(--text) 10%, transparent); padding: 0 6
 
 .post__text{ margin-top: 10px; white-space: pre-wrap; overflow-wrap: anywhere; }
 
+.media{
+  margin-top: 10px;
+  border-radius: var(--r);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--panel) 85%, var(--text) 15%);
+}
+.media img,
+.media video{
+  display:block;
+  width:100%;
+  height:auto;
+  max-height: 560px;
+  object-fit: contain;
+}
+
 .actions{ margin-top: 12px; display:flex; gap: 10px; flex-wrap: wrap; }
 .act{ padding: 8px 10px; border-radius: var(--r2); border: 1px solid var(--line); background: var(--panel); color: var(--muted); cursor:pointer; font-weight: 950; }
 .act:hover{ background: color-mix(in srgb, var(--panel) 85%, var(--accent) 15%); }

@@ -17,7 +17,6 @@ import {
   doc,
   getDoc,
   setDoc,
-  addDoc,
   serverTimestamp,
   query,
   orderBy,
@@ -47,6 +46,7 @@ const el = {
   me: $('#me'),
   postText: $('#post-text'),
   postTopic: $('#post-topic'),
+  postMedia: $('#post-media'),
   btnPost: $('#btn-post'),
   avatarFile: $('#avatar-file'),
   feed: $('#feed'),
@@ -286,12 +286,40 @@ function canInteract(){
   return !!(meUser && meUser.emailVerified);
 }
 
+function isImage(type){ return typeof type === 'string' && type.startsWith('image/'); }
+function isVideo(type){ return typeof type === 'string' && type.startsWith('video/'); }
+
+function safeName(name){
+  return String(name || 'file').replace(/[^a-zA-Z0-9._-]+/g, '_').slice(0, 80);
+}
+
+async function uploadPostMedia(file, postId){
+  const fname = safeName(file?.name);
+  const path = `posts/${postId}/${Date.now()}_${fname}`;
+  const r = ref(storage, path);
+  await uploadBytes(r, file);
+  const url = await getDownloadURL(r);
+  return { url, type: file.type || '' };
+}
+
 function renderPost(p){
   const topic = (p.topics && p.topics[0]) ? p.topics[0] : 'memes';
   const name = p.authorDisplayName || 'Klonkie User';
   const handle = p.authorHandle || '@clown';
   const photo = p.authorPhotoURL || '';
   const when = p.createdAt?.toMillis ? fmtTime(p.createdAt.toMillis()) : '—';
+
+  const mediaUrl = p.mediaURL || '';
+  const mediaType = p.mediaType || '';
+
+  const mediaHtml = mediaUrl ? `
+    <div class="media">
+      ${isVideo(mediaType)
+        ? `<video controls playsinline src="${escapeHtml(mediaUrl)}"></video>`
+        : `<img alt="meme" loading="lazy" src="${escapeHtml(mediaUrl)}" />`
+      }
+    </div>
+  ` : '';
 
   const wrap = document.createElement('article');
   wrap.className = 'post';
@@ -307,6 +335,7 @@ function renderPost(p){
       <div class="time">❤ ${Number(p.likeCount||0)}</div>
     </div>
     <div class="post__text">${escapeHtml(p.text || '')}</div>
+    ${mediaHtml}
     <div class="actions">
       <button class="act" data-act="like">Like</button>
       <button class="act" data-act="comment">Comment</button>
@@ -427,6 +456,23 @@ async function createPost(){
     return;
   }
 
+  const mediaFile = el.postMedia?.files?.[0] || null;
+  if (mediaFile) {
+    const ok = isImage(mediaFile.type) || isVideo(mediaFile.type);
+    if (!ok) {
+      toast('Alleen image/video files pls.', 'warn');
+      C?.sfx('error');
+      return;
+    }
+    // keep it sane for now
+    const maxBytes = 12 * 1024 * 1024;
+    if (mediaFile.size > maxBytes) {
+      toast('File is te groot (max ~12MB).', 'warn');
+      C?.sfx('error');
+      return;
+    }
+  }
+
   if (el.btnPost) el.btnPost.disabled = true;
 
   const topic = el.postTopic.value || 'memes';
@@ -434,7 +480,20 @@ async function createPost(){
   try {
     const profile = await ensureProfile(meUser);
 
-    await addDoc(collection(db, 'posts'), {
+    const postRef = doc(collection(db, 'posts'));
+    const postId = postRef.id;
+
+    let mediaURL = '';
+    let mediaType = '';
+
+    if (mediaFile) {
+      toast('Uploading meme…', 'warn');
+      const up = await uploadPostMedia(mediaFile, postId);
+      mediaURL = up.url;
+      mediaType = up.type;
+    }
+
+    await setDoc(postRef, {
       authorUid: meUser.uid,
       authorHandle: profile.handle,
       authorDisplayName: profile.displayName,
@@ -445,9 +504,13 @@ async function createPost(){
       commentCount: 0,
       createdAt: serverTimestamp(),
       kind: 'user',
+      mediaURL,
+      mediaType,
     });
 
     el.postText.value = '';
+    if (el.postMedia) el.postMedia.value = '';
+
     toast('Posted.', 'ok');
     C?.sfx('post');
     C?.spawnConfetti?.(60);
@@ -594,7 +657,7 @@ async function updateWire(){
       </div>
       <div class="post__text">${escapeHtml(j.title || 'meme')}</div>
       <div class="actions">
-        <a class="act" href="${escapeHtml(j.postLink || j.url || '#')}" target="_blank" rel="noopener">Open</a>
+        <a class="act" href="${escapeHtml(j.postLink || j.url || '#')}" target="_blank" rel="noopener">Bekijken</a>
       </div>
     `;
 
