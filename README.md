@@ -1,16 +1,31 @@
 # iiZappy/website
 
-A single-page (plus a games page) **meme-heavy** SQF / Arma-style mission editor parody.
+SpingoWiki: a Wikipedia-ish meme portal with original mascots + a mini game arcade.
 
-Characters (original mascots):
-- **Spingo** (yellow chaos sponge energy)
-- **Jimbo** (boy-genius sci-fi energy)
-- **Shronk** (green ogre energy)
+## Mascots (original)
+- **Spingo** — yellow chaos energy
+- **Jimbo** — boy-genius sci‑fi energy
+- **Shronk** — green swamp-tank energy
 
-Important:
-- No copyrighted images/audio are shipped.
-- All visuals are original SVG + CSS, all audio is procedural WebAudio.
+## Sounds (your files)
+This repo is wired for **real audio samples** if you add your own files (that you have the rights to use).
+
+Put your sounds in:
+- `assets/sfx/`
+
+Expected filenames (mp3/ogg/wav are fine):
+- `bubble.*`
+- `zap.*`
+- `horn.*`
+- `whoosh.*`
+- `slap.*`
+- `splat.*`
+- `laugh.*`
+- `success.*`
+- `error.*`
+
+If a sample is missing, the site falls back to procedural WebAudio so buttons still make noise.
 
 Pages:
-- `index.html` — “Eden-ish” editor parody UI with panels, viewport, console, sound, and easter eggs.
-- `games.html` — mini meme games with sound.
+- `index.html` — SpingoWiki (wiki layout + meme tools)
+- `games.html` — Meme Arcade (real games, no Arma references)

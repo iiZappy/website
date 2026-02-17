@@ -4,7 +4,7 @@
   const C = window.MemeCore;
   if (!C) return;
 
-  const { $, $$, state, clamp, setToast, openModal, setMode, setVolume, sfx, spawnConfetti, spawnStars, spawnSlime } = C;
+  const { $, $$, state, clamp, setToast, openModal, setMode, setVolume, sfx, primeSamples, spawnConfetti, spawnStars, spawnSlime } = C;
 
   // Audio UI
   function wireAudio(){
@@ -17,8 +17,9 @@
       btnSound.setAttribute('aria-pressed', state.sound ? 'true' : 'false');
       btnSound.textContent = `Sound: ${state.sound ? 'On' : 'Off'}`;
       setVolume(state.volume);
+      if (state.sound) primeSamples?.();
       sfx(state.sound ? 'success' : 'error');
-      setToast(state.sound ? 'Sound enabled. Your browser now regrets this.' : 'Sound disabled. Peace achieved.', 'warn');
+      setToast(state.sound ? 'Sound enabled. Your ears signed no waiver.' : 'Sound disabled. Peace achieved.', 'warn');
     });
 
     btnMute?.addEventListener('click', () => {
@@ -99,7 +100,7 @@
 
       const msg = `
         <p><strong>Search results for:</strong> <code>${escapeHtml(q)}</code></p>
-        <p class="mw-note">0 results found (truth-based system). Try clicking a mascot instead.</p>
+        <div class="mw-note">0 results found (truth-based system). Try clicking a mascot instead.</div>
       `;
 
       openModal('Search', msg);
@@ -127,8 +128,8 @@
       sfx('bubble');
       if (state.brandClicks === 7) {
         openModal('Secret unlocked', `
-          <p><strong>Unlocked:</strong> Editor Goblin Wiki Administrator.</p>
-          <p class="mw-note">You are now allowed to “fix” pages by adding more stamps.</p>
+          <p><strong>Unlocked:</strong> MemeWiki Administrator.</p>
+          <div class="mw-note">You are now allowed to “fix” pages by adding more stamps.</div>
         `);
         spawnConfetti(220);
         sfx('laugh');
@@ -139,16 +140,16 @@
     });
   }
 
-  // Featured error rotation
+  // Featured error rotation (meme-only)
   function wireFeatured(){
     const el = $('#featured-error');
     if (!el) return;
     const pool = [
-      'Error: remoteExec called with target=0 (confidence: 100%).',
-      'Warning: desync approaching (distance: 0m).',
-      'Undefined variable: <code>competence</code>.',
-      'Config: “this is fine” not found.',
-      'RPT: writing a sequel trilogy.'
+      '404: vibes not found.',
+      'Uncaught (in brain): <code>bruh</code> is not defined.',
+      'TypeError: meme is not a function.',
+      'Warning: cringe threshold exceeded.',
+      'Info: laugh track loaded (against your will).'
     ];
 
     let i = 0;

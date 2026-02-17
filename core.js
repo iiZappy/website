@@ -1,4 +1,4 @@
-/* Shared core: state, mode, procedural audio, FX canvas, toast + modal helpers */
+/* Shared core: state, mode, sample-first audio, procedural fallback, FX canvas, toast + modal helpers */
 
 (() => {
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -22,7 +22,7 @@
     const el = $('#toast') || $('#pill-status');
     if (!el) return;
     el.textContent = text;
-    el.style.borderColor = mood === 'danger' ? 'rgba(255,143,163,0.35)' : (mood === 'warn' ? 'rgba(255,211,124,0.35)' : 'rgba(255,255,255,0.14)');
+    el.style.borderColor = mood === 'danger' ? 'rgba(255,143,163,0.55)' : (mood === 'warn' ? 'rgba(255,211,124,0.60)' : 'rgba(200,204,209,0.95)');
   }
 
   function openModal(title, html){
@@ -35,7 +35,7 @@
     if (typeof d.showModal === 'function') d.showModal();
   }
 
-  // --- WebAudio SFX (procedural)
+  // --- WebAudio init
   let audio = null;
 
   function audioInit(){
@@ -58,6 +58,89 @@
     audio.master.gain.value = state.muted ? 0 : (state.sound ? state.volume : 0);
   }
 
+  // --- Sample-first SFX
+  const sampleMap = {
+    bubble: 'assets/sfx/bubble',
+    zap: 'assets/sfx/zap',
+    horn: 'assets/sfx/horn',
+    whoosh: 'assets/sfx/whoosh',
+    slap: 'assets/sfx/slap',
+    splat: 'assets/sfx/splat',
+    laugh: 'assets/sfx/laugh',
+    success: 'assets/sfx/success',
+    error: 'assets/sfx/error',
+  };
+
+  const sampleCache = new Map(); // type -> AudioBuffer
+  const sampleBroken = new Set();
+  const sampleLoading = new Set();
+
+  async function fetchFirstExisting(base){
+    // Try common extensions; first that exists wins.
+    const exts = ['.mp3', '.ogg', '.wav'];
+    for (const ext of exts) {
+      const url = `${base}${ext}`;
+      try {
+        const res = await fetch(url, { cache: 'force-cache' });
+        if (!res.ok) continue;
+        const buf = await res.arrayBuffer();
+        return { url, buf };
+      } catch (_) {
+        // try next
+      }
+    }
+    return null;
+  }
+
+  async function loadSample(type){
+    if (sampleBroken.has(type) || sampleCache.has(type) || sampleLoading.has(type)) return;
+    const base = sampleMap[type];
+    if (!base) return;
+
+    const a = audioInit();
+    if (!a) return;
+
+    sampleLoading.add(type);
+    try {
+      const got = await fetchFirstExisting(base);
+      if (!got) {
+        sampleBroken.add(type);
+        return;
+      }
+
+      const decoded = await a.ctx.decodeAudioData(got.buf.slice(0));
+      sampleCache.set(type, decoded);
+    } catch (_) {
+      sampleBroken.add(type);
+    } finally {
+      sampleLoading.delete(type);
+    }
+  }
+
+  function playSample(type){
+    if (!state.sound || state.muted) return false;
+    if (sampleBroken.has(type)) return false;
+
+    const a = audioInit();
+    if (!a) return false;
+    if (a.ctx.state === 'suspended') a.ctx.resume().catch(() => {});
+    a.master.gain.value = state.volume;
+
+    const buf = sampleCache.get(type);
+    if (!buf) return false;
+
+    const src = a.ctx.createBufferSource();
+    src.buffer = buf;
+    src.connect(a.master);
+    try { src.start(); } catch (_) {}
+    return true;
+  }
+
+  function primeSamples(){
+    // fire-and-forget preload
+    Object.keys(sampleMap).forEach(t => loadSample(t));
+  }
+
   function env(g, now, a=0.008, d=0.12, peak=0.18){
     g.gain.setValueAtTime(0.0001, now);
     g.gain.exponentialRampToValueAtTime(peak, now + a);
@@ -65,7 +148,12 @@
   }
 
   function sfx(type){
+    // if sample exists -> use it; otherwise preload + procedural fallback
     if (!state.sound || state.muted) return;
+
+    if (playSample(type)) return;
+    loadSample(type); // try to load for next time
+
     const a = audioInit();
     if (!a) return;
     if (a.ctx.state === 'suspended') a.ctx.resume().catch(() => {});
@@ -385,16 +473,13 @@
     document.documentElement.classList.toggle('mode-shronk', mode === 'shronk');
 
     const msg = {
-      spingo: 'Spingo mode: bubble engineering enabled.',
-      jimbo: 'Jimbo mode: incorrect science engaged.',
-      shronk: 'Shronk mode: yelling at bugs.'
+      spingo: 'Spingo mode: bubble logic enabled.',
+      jimbo: 'Jimbo mode: science vibes engaged.',
+      shronk: 'Shronk mode: swamp confidence enabled.'
     }[mode] || 'Mode set.';
 
     setToast(msg, 'warn');
     sfx(mode === 'jimbo' ? 'zap' : (mode === 'shronk' ? 'horn' : 'bubble'));
-
-    const crumb = document.getElementById('crumb-mode');
-    if (crumb) crumb.textContent = mode[0].toUpperCase() + mode.slice(1);
   }
 
   const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
@@ -410,7 +495,7 @@
       setTimeout(() => document.documentElement.classList.remove('glitch'), 900);
       spawnConfetti(220);
       sfx('laugh');
-      openModal('Konami Unlocked', '<p><strong>Unlocked:</strong> MEGA MEME MODE.</p><p class="muted">Your keyboard chose chaos.</p>');
+      openModal('Konami Unlocked', '<p><strong>Unlocked:</strong> MEGA MEME MODE.</p><p>Reality is optional now.</p>');
     }
 
     if (k.length === 1) {
@@ -435,7 +520,6 @@
     });
   }
 
-  // Export
   window.MemeCore = {
     $,
     $$,
@@ -447,6 +531,7 @@
     setMode,
     setVolume,
     sfx,
+    primeSamples,
     spawnConfetti,
     spawnBubbles,
     spawnStars,

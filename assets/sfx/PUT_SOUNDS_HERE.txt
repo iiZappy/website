@@ -1,0 +1,15 @@
+Put your OWN sound files here (that you have the rights to use).
+
+Expected base names (extension can be .mp3, .ogg, or .wav):
+- bubble
+- zap
+- horn
+- whoosh
+- slap
+- splat
+- laugh
+- success
+- error
+
+Example:
+- assets/sfx/horn.mp3
